@@ -20,7 +20,8 @@ export class AppComponent {
 
   public callAPI(liga: string){
     this.apiService.getSeasonsByLegue(liga).subscribe(data => {
-      this.seasons = data.map((season: string) => ({index: season.substr(0,4), value: season}))
+      console.log(data)
+      this.seasons = data.map((season: string) => ({index: season.substring(0,4), value: season}))
       console.log(this.seasons)      
     })
   }
