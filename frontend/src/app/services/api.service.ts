@@ -32,10 +32,10 @@ export class ApiService{
       }
 
     getSeasonsByLegue(league: string){
-        const year = '2021';
-        const html_doc = environment.htmlCalendar;
-        const body = JSON.stringify({ html_doc, league, year})
-        console.log(body)
-        return this.http.get<any>(environment.apiUrl + environment.getSeasonsByLeague + "?league=" +league)
+        return this.http.get<any>(environment.apiUrl + environment.getSeasons + "?league=" +league)
+    }
+
+    getBasicInfoLeagues(){
+      return this.http.get<any>(environment.apiUrl + environment.getBasicInfo)
     }
 }

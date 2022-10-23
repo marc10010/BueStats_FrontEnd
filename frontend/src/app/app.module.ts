@@ -6,10 +6,17 @@ import { AppComponent } from './app.component';
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from "@angular/forms";
+import { StatsComponent } from './pages/stats/stats.component';
+import { HomeComponent } from './pages/home/home.component';
+import { HeaderComponent } from './pages/header/header.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    StatsComponent,
+    HomeComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
@@ -18,6 +25,7 @@ import { FormsModule } from "@angular/forms";
     HttpClientModule,
     BrowserAnimationsModule,
     FormsModule,
+    FlexLayoutModule
 
   ],
   providers: [],

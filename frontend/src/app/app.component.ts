@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { ApiService } from './services/api.service';
-import { optionsMap } from './types/api';
 
 @Component({
   selector: 'app-root',
@@ -10,8 +8,9 @@ import { optionsMap } from './types/api';
 
 
 export class AppComponent {
-  title = 'frontend';
+  title = 'BueStats';
 
+  /*
   constructor(
     private apiService: ApiService,
   ){}
@@ -25,6 +24,7 @@ export class AppComponent {
       console.log(this.seasons)      
     })
   }
+  */
 
 
 }

@@ -1,0 +1,32 @@
+<!--Div con los desplegables -->
+<div>
+
+    <div class="card-container">
+        <mat-form-field appearance="fill">
+          <mat-label>League</mat-label>
+          <mat-select [(ngModel)]="selectedLeague" (selectionChange)="changeLeague(selectedLeague)">
+            <mat-option *ngFor="let league of leagues" [value]="league.index">
+              {{league.value}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" >
+            <mat-label>season</mat-label>
+            <mat-select [(ngModel)]="selectedSeason" [disabled]="!selectedLeague">
+              <mat-option *ngFor="let season of seasons" [value]="season.index">
+                {{season.value}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" >
+            <mat-label>team</mat-label>
+            <mat-select [(ngModel)]="selectedTeam" [disabled]="!selectedLeague">
+              <mat-option *ngFor="let team of teams" [value]="team.index">
+                {{team.value}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>

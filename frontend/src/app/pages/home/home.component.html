@@ -1,0 +1,14 @@
+<div class="cards">
+
+    <div fxLayout="row wrap" fxLayoutAlign="space-evenly center"  class="leagueCard">
+        <mat-card  fxFlex="25" *ngFor="let league of infoLeague" style="margin:10px;" (click)=stats(league[1])>
+            <mat-card-title-group>
+              <mat-card-title>{{league[0]}}</mat-card-title>
+              <img mat-card-sm-image src={{league[2]}} >
+            </mat-card-title-group>
+            <mat-card-content>
+              <p>Textos o enlace a nuevas funcionalidades</p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
