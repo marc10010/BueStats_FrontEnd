@@ -9,6 +9,7 @@ export const environment = {
   getSeasons:'getSeasonsByLeague',
   getGroups: 'getGroupsBySeasonLeague',
   getBasicInfo: 'basicInfoLeagues',
+  getAllTeams:'getAllTeamsByLeagueYear',
 
 };
 

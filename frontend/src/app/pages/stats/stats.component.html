@@ -21,12 +21,21 @@
         </mat-form-field>
 
         <mat-form-field appearance="fill" >
-            <mat-label>team</mat-label>
-            <mat-select [(ngModel)]="selectedTeam" [disabled]="!selectedLeague">
-              <mat-option *ngFor="let team of teams" [value]="team.index">
-                {{team.value}}
+            <mat-label>Groups</mat-label>
+            <mat-select [(ngModel)]="selectedGroup" [disabled]="!selectedLeague">
+              <mat-option *ngFor="let group of groups" [value]="group.index">
+                {{group.value}}
               </mat-option>
             </mat-select>
         </mat-form-field>
+
+        <mat-form-field appearance="fill" >
+          <mat-label>Team</mat-label>
+          <mat-select [(ngModel)]="selectedTeam" [disabled]="!selectedLeague">
+            <mat-option *ngFor="let team of teams" [value]="team.index">
+              {{team.value}}
+            </mat-option>
+          </mat-select>
+      </mat-form-field>
     </div>
 </div>

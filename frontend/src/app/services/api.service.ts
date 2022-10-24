@@ -38,4 +38,8 @@ export class ApiService{
     getBasicInfoLeagues(){
       return this.http.get<any>(environment.apiUrl + environment.getBasicInfo)
     }
+
+    getAllTeamsByLeagueYear(year: string, league: string){
+      return this.http.get<any>(environment.apiUrl + environment.getAllTeams+"?league=" +league +"&year=" + year)
+    }
 }
