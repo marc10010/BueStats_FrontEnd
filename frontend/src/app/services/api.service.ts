@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../types/api';
@@ -10,10 +10,16 @@ import { map } from 'rxjs/operators';
     providedIn: 'root'
   })
 export class ApiService{
+  private corsHeaders: HttpHeaders;
 
     constructor (
         private http: HttpClient
-    ){}
+    ){
+      this.corsHeaders = new HttpHeaders({
+        'Access-Control-Allow-Origin': '*'
+      });
+      //this.contents = '';
+    }
 
     private mapResponseConvertFieldsToString(response: ApiResponse<any[]>, fieldsToConvertFromNumberToString: string[]) {
         return ({
@@ -32,14 +38,14 @@ export class ApiService{
       }
 
     getSeasonsByLegue(league: string){
-        return this.http.get<any>(environment.apiUrl + environment.getSeasons + "?league=" +league)
+        return this.http.get<any>(environment.apiUrl + environment.getSeasons + "?league=" +league, {headers: this.corsHeaders})
     }
 
     getBasicInfoLeagues(){
-      return this.http.get<any>(environment.apiUrl + environment.getBasicInfo)
+      return this.http.get<any>(environment.apiUrl + environment.getBasicInfo, {headers: this.corsHeaders})
     }
 
     getAllTeamsByLeagueYear(year: string, league: string){
-      return this.http.get<any>(environment.apiUrl + environment.getAllTeams+"?league=" +league +"&year=" + year)
+      return this.http.get<any>(environment.apiUrl + environment.getAllTeams+"?league=" +league +"&year=" + year, {headers: this.corsHeaders})
     }
 }

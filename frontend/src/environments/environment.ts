@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   apiUrl: 'http://127.0.0.1:5000/api/',
+  //apiUrl: 'https://buestats.redirectme.net:5000/api/',
   htmlCalendar: 'https://baloncestoenvivo.feb.es/calendario/',
   getSeasons:'getSeasonsByLeague',
   getGroups: 'getGroupsBySeasonLeague',
