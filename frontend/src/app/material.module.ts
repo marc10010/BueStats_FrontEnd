@@ -7,6 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 
 const modulosMaterial = [
@@ -18,6 +19,7 @@ const modulosMaterial = [
     MatToolbarModule,
     MatButtonModule,
     MatCardModule,
+    MatAutocompleteModule,
 
 ]
 

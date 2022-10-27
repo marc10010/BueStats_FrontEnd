@@ -8,3 +8,7 @@ export interface optionsMap{
     index: string;
     value: string
 }
+
+export interface Team{
+    team: string;
+}

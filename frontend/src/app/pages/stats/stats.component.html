@@ -29,6 +29,16 @@
             </mat-select>
         </mat-form-field>
 
+        <mat-form-field appearance="fill">
+          <mat-label>Group</mat-label>
+          <input type="text" matInput [formControl]="groupControl" [matAutocomplete]="autoGroup" >
+          <mat-autocomplete #autoGroup="matAutocomplete" [displayWith]="displayFn" >
+            <mat-option *ngFor="let group of groupsAuto | async" [value]="group">
+              {{group.team}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+<!--
         <mat-form-field appearance="fill" >
           <mat-label>Team</mat-label>
           <mat-select [(ngModel)]="selectedTeam" [disabled]="!selectedLeague">
@@ -37,16 +47,18 @@
             </mat-option>
           </mat-select>
       </mat-form-field>
-<!--    
-    <app-autocomplete class="autocomplete" name="equipoAuto" ngDefaultControl
-        [idOpcionSeleccionada]="selectedTeam"
-        (cuandoSeSeleccioneOpcion)="selectedTeam = $event" icon=""
-        label="equipos"
-        [options]="teamsAuto">
-    </app-autocomplete>
-      -->
+-->
+      <mat-form-field appearance="fill">
+        <mat-label>Team</mat-label>
+        <input type="text" matInput [formControl]="teamControl" [matAutocomplete]="autoTeam">
+        <mat-autocomplete #autoTeam="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let team of teamsAuto | async" [value]="team">
+            {{team.team}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+
     </div>
-    <div>
-      <iframe width="100%" height="700px" src="http://127.0.0.1:8080/"></iframe>
-    </div>
+
 </div>
