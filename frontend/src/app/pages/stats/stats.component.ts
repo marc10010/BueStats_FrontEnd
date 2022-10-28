@@ -19,7 +19,10 @@ export class StatsComponent implements OnInit {
   @ViewChild('botTeamInput') botTeamInput:ElementRef<HTMLInputElement> | undefined
   constructor(
     private apiService: ApiService,
-  ) {  }
+  ) {
+    this.teamControl.disable()
+    this.groupControl.disable()
+    }
 
   teamControl = new FormControl<string | Team >("")
   groupControl = new FormControl<string | Team >("")
@@ -37,6 +40,7 @@ export class StatsComponent implements OnInit {
   teams: optionsMap[] = [];
   groups: optionsMap[] = [];
   weekMatchInit = []
+  weekMatchLast = []
   selectedWMI = 0
   selectedWML = 0
 
@@ -53,12 +57,10 @@ export class StatsComponent implements OnInit {
     if (history.state.data) {
       this.selectedLeague =history.state.data.league
       this.getSeasonsByLeague(this.selectedLeague)
-      this.getTeams(this.selectedSeason, this.selectedLeague)
-      this.getWeekMatch()
+      this.getTeamsGroups(this.selectedSeason, this.selectedLeague)
     }
     else{
-      this.teamControl.disable()
-      this.groupControl.disable()
+     
     }
   }
 
@@ -71,11 +73,10 @@ export class StatsComponent implements OnInit {
   private getSeasonsByLeague(league: string){
     this.apiService.getSeasonsByLegue(league).subscribe(data => {
       this.seasons = data.map((season: string) => ({index: season.substring(0,4), value: season}))
-      console.log(this.seasons)
     })
   }
 
-  private getTeams(year: string, league: string){
+  private getTeamsGroups(year: string, league: string){
     this.apiService.getAllTeamsByLeagueYear(year, league).subscribe(data => {
       console.log(data)
       for (let i= 0; i< data.length; ++i){
@@ -85,16 +86,21 @@ export class StatsComponent implements OnInit {
         }
         this.groups.push({'index': data[i][0][0], 'value': data[i][0][1]})
       }
- 
-      let teamsAux: Team[] = data[0].map((value: any) => {
-        return {team: value[2]}
+      
+
+
+      let teamsAux: Team[] = this.teams.map((value: any) => {
+          return {team: value.value}
       })
+       
 
       let groupsAux: Team[] = this.groups.map((value: any) => {
         return {team: value.value}
       })
       
-
+      this.teamControl.enable()
+      this.groupControl.enable()
+      this.getWeekMatch()
 
       this.teamsAuto = this.teamControl.valueChanges.pipe(
         startWith(""),
@@ -123,21 +129,58 @@ export class StatsComponent implements OnInit {
   }
 
   private getWeekMatch(){
-    let codetest = '79249'
-    
-    this.apiService.getWeekMatchByCode(codetest).subscribe(data =>{
-      console.log(data)
-      this.weekMatchInit= data
-    })
+    if(this.selectedGroup){
+      let codeLeague = this.groups.find(test => test.value==this.selectedGroup)
+      if(codeLeague){
+        this.apiService.getWeekMatchByCode(codeLeague.index).subscribe(data =>{
+          this.weekMatchInit= data
+        })
+      }
+
+    }
   }
 
 
   changeLeague(league: string){
+    this.resetAll()
     this.getSeasonsByLeague(league);
+    this.getTeamsGroups(this.selectedSeason.substring(0,4), league)
+  }
+  changeSeason(season: string){
+    this.resetAll()
+    this.getTeamsGroups(season, this.selectedLeague)
   }
 
+  
+  
+  groupSelected(group: any){
 
+      let teamsOfGroup = this.teams.filter(team => team.index == group.value.toString())
+      
+      console.log(!teamsOfGroup.find(team => team.value == this.selectedTeam))
+      if(!teamsOfGroup.find(team => team.value == this.selectedTeam)) this.resetTeams()
 
+      
+      let teamAux :Team[] = teamsOfGroup.map((value: any) => {
+        return {team: value.value}
+      })
+      this.teamsAuto = this.teamControl.valueChanges.pipe(
+        startWith(""),
+        map(value=>{
+          const name = typeof value === 'string' ? value : value?.team;
+          return name ? this._filterTeamsByGroup(teamAux, name) : teamAux.slice();
+        })
+      )
+  }
+
+  teamSelected(team: any){
+    console.log(typeof team.team)
+    console.log(this.teams)
+
+    let find = this.teams.find(team1 => team1.value== team.team)
+    if (find) this.selectedGroup= find.index
+    console.log(this.selectedGroup)
+  }
 
 
 
@@ -163,9 +206,12 @@ export class StatsComponent implements OnInit {
     return text && text.team ? text.team : '';
   }
   private _filterTeams(options: Team[], value: string){
-    const filterValue = value.toLowerCase();
+    if(this.teamsAuto) return options.filter((team: { team: string; }) => team.team.toLowerCase().includes(value.toLowerCase()))
+    return []
+  }
 
-    if(this.teamsAuto) return options.filter((team: { team: string; }) => team.team.toLowerCase().includes(filterValue))
+  private _filterTeamsByGroup(teams: any[], value: any){
+    if(this.teamsAuto) return teams.filter(team => team.team.toLowerCase().includes(value.toLowerCase()))
     return []
   }
 
@@ -246,6 +292,37 @@ export class StatsComponent implements OnInit {
     }
     if(this.botTeamInput) this.botTeamInput.nativeElement.value = '';
     this.botTeamCtrl.setValue(null);
+  }
+
+
+
+  private resetAll(){
+    this.resetGroup()
+    this.resetTeams()
+  }
+
+  private resetGroup(){
+    this.groupControl.reset()
+    this.selectedGroup=""
+    this.groups = []
+  }
+
+  private resetTeams(){
+    this.teamControl.reset()
+    this.selectedTeam=""
+    this.teams = []
+    this.resetTop()
+    this.resetBottom()
+  }
+
+  private resetTop(){
+    this.topTeamCtrl.reset()
+    this.selectedTopTeams = []
+  }
+
+  private resetBottom(){
+    this.botTeamCtrl.reset()
+    this.selectedBotTeams = []
   }
 
 }
