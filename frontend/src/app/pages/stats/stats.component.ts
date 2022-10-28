@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Data } from '@angular/router';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {MatChipInputEvent} from '@angular/material/chips';
+
 import { map, Observable, startWith, of } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { optionsMap, Team } from 'src/app/types/api';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-stats',
@@ -12,12 +15,19 @@ import { optionsMap, Team } from 'src/app/types/api';
 })
 export class StatsComponent implements OnInit {
   
+  @ViewChild('topTeamInput') topTeamInput:ElementRef<HTMLInputElement> | undefined
+  @ViewChild('botTeamInput') botTeamInput:ElementRef<HTMLInputElement> | undefined
   constructor(
     private apiService: ApiService,
-  ) { }
+  ) {  }
 
   teamControl = new FormControl<string | Team >("")
   groupControl = new FormControl<string | Team >("")
+  topTeamCtrl = new FormControl('');
+  botTeamCtrl = new FormControl('');
+  
+
+  separatorKeysCodes: number[] = [ENTER, COMMA];
   selectedLeague = ""
   selectedSeason = (new Date().getFullYear()).toString()
   selectedTeam = ""
@@ -26,16 +36,25 @@ export class StatsComponent implements OnInit {
   seasons: optionsMap[] = [];
   teams: optionsMap[] = [];
   groups: optionsMap[] = [];
+  weekMatchInit = []
+  selectedWMI = 0
+  selectedWML = 0
 
+  
   teamsAuto: Observable<Team[]> | undefined;
   groupsAuto: Observable<Team[]> | undefined;
-  
+  teamsTopAuto: Observable<string[]> |undefined
+  selectedTopTeams : string[]=[]
+  teamsBotAuto: Observable<string[]> |undefined
+  selectedBotTeams : string[]=[]
+
   ngOnInit(): void {
     this.getLeagues()
     if (history.state.data) {
       this.selectedLeague =history.state.data.league
       this.getSeasonsByLeague(this.selectedLeague)
       this.getTeams(this.selectedSeason, this.selectedLeague)
+      this.getWeekMatch()
     }
     else{
       this.teamControl.disable()
@@ -63,21 +82,20 @@ export class StatsComponent implements OnInit {
         for(let j = 0; j<data[i].length; ++j){
           
           this.teams.push({'index': data[i][j][1], 'value': data[i][j][2]})
-          if(!this.groups.find(x => x.index == data[i][j][0] )) this.groups.push({'index': data[i][j][0], 'value': data[i][j][1]})
-          
         }
+        this.groups.push({'index': data[i][0][0], 'value': data[i][0][1]})
       }
+ 
       let teamsAux: Team[] = data[0].map((value: any) => {
         return {team: value[2]}
       })
 
       let groupsAux: Team[] = this.groups.map((value: any) => {
-        console.log(value)
         return {team: value.value}
       })
-      console.log(teamsAux)
-      console.log(groupsAux)
       
+
+
       this.teamsAuto = this.teamControl.valueChanges.pipe(
         startWith(""),
         map( value=>{
@@ -93,15 +111,52 @@ export class StatsComponent implements OnInit {
           return name ? this._filterGroups(groupsAux as Team[], name as string) : groupsAux.slice();
         })
       )
+    
+      this.teamsTopAuto = this.topTeamCtrl.valueChanges.pipe(
+        startWith(null),
+        map( (team: string|null) => (team ? this._filterTopTeam(team): this.teams.map(t => {return t.value}).slice())))
       
-      
-      
+        this.teamsBotAuto = this.botTeamCtrl.valueChanges.pipe(
+          startWith(null),
+          map( (team: string|null) => (team ? this._filterBotTeam(team): this.teams.map(t => {return t.value}).slice())))
+      })
+  }
+
+  private getWeekMatch(){
+    let codetest = '79249'
+    
+    this.apiService.getWeekMatchByCode(codetest).subscribe(data =>{
+      console.log(data)
+      this.weekMatchInit= data
     })
   }
+
 
   changeLeague(league: string){
     this.getSeasonsByLeague(league);
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   displayFn(text: Team): string {
@@ -119,6 +174,78 @@ export class StatsComponent implements OnInit {
 
     if(this.groupsAuto) return options.filter((group: { team: string; }) => group.team.toLowerCase().includes(filterValue))
     return []
+  }
+  
+  private _filterTopTeam(value: string) {
+    let options = this.teams.map(value => {return value.value})
+    const filterValue = value.toLowerCase();
+    return options.filter(team => team.toLowerCase().includes(filterValue) ) //&& !this.selectedTopTeams.includes(team)
+  }
+
+  addTop(event: MatChipInputEvent): void{
+    const value = (event.value || '').trim();
+
+
+    // Add our fruit
+    if (value && this.teams.map(t=> {return t.value}).includes(value)) {
+      this.selectedTopTeams.push(value);
+    }
+
+    // Clear the input value
+    event.chipInput!.clear();
+
+    this.topTeamCtrl.setValue(null);
+  }
+  removeTop(team: string): void {
+    const index = this.selectedTopTeams.indexOf(team);
+    
+    if (index >= 0) {
+      this.selectedTopTeams.splice(index, 1);
+    }
+  }
+  selectedTop(event: MatAutocompleteSelectedEvent): void {
+
+    if (!this.selectedTopTeams.includes(event.option.viewValue)) {
+      this.selectedTopTeams.push(event.option.viewValue);
+    }
+    if(this.topTeamInput) this.topTeamInput.nativeElement.value = '';
+    this.topTeamCtrl.setValue(null);
+  }
+
+
+  private _filterBotTeam(value: string) {
+    let options = this.teams.map(value => {return value.value})
+    const filterValue = value.toLowerCase();
+    return options.filter(team => team.toLowerCase().includes(filterValue) ) //&& !this.selectedBotTeams.includes(team)
+  }
+
+  addBot(event: MatChipInputEvent): void{
+    const value = (event.value || '').trim();
+
+
+    // Add our fruit
+    if (value && this.teams.map(t=> {return t.value}).includes(value)) {
+      this.selectedBotTeams.push(value);
+    }
+    // Clear the input value
+    event.chipInput!.clear();
+    this.topTeamCtrl.setValue(null);
+  }
+
+  removeBot(team: string): void {
+    const index = this.selectedBotTeams.indexOf(team);
+    
+    if (index >= 0) {
+      this.selectedBotTeams.splice(index, 1);
+    }
+  }
+  selectedBot(event: MatAutocompleteSelectedEvent): void {
+
+    if (!this.selectedBotTeams.includes(event.option.viewValue)) {
+      this.selectedBotTeams.push(event.option.viewValue);
+    }
+    if(this.botTeamInput) this.botTeamInput.nativeElement.value = '';
+    this.botTeamCtrl.setValue(null);
   }
 
 }

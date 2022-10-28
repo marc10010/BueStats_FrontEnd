@@ -12,6 +12,7 @@ export const environment = {
   getGroups: 'getGroupsBySeasonLeague',
   getBasicInfo: 'basicInfoLeagues',
   getAllTeams:'getAllTeamsByLeagueYear',
+  getWeeksMatch:'getMatchWeeksFromSeasonLeague',
 
 };
 

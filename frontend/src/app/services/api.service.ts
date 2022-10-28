@@ -48,4 +48,8 @@ export class ApiService{
     getAllTeamsByLeagueYear(year: string, league: string){
       return this.http.get<any>(environment.apiUrl + environment.getAllTeams+"?league=" +league +"&year=" + year, {headers: this.corsHeaders})
     }
+
+    getWeekMatchByCode(code: string){
+      return this.http.get<any>(environment.apiUrl + environment.getWeeksMatch +'?code='+code, {headers: this.corsHeaders})
+    }
 }
