@@ -10,6 +10,7 @@ import { map } from 'rxjs/operators';
     providedIn: 'root'
   })
 export class ApiService{
+  removeAccents = require("remove-accents")
   private corsHeaders: HttpHeaders;
 
     constructor (
@@ -46,15 +47,23 @@ export class ApiService{
     }
 
     getAllTeamsByLeagueYear(year: string, league: string){
-      return this.http.get<any>(environment.apiUrl + environment.getAllTeams+"?league=" +league +"&year=" + year, {headers: this.corsHeaders})
+      return this.http.get<any>(environment.apiUrl + environment.getAllTeams+"?league=" +this.removeAccents(league) +"&year=" + year, {headers: this.corsHeaders})
     }
 
     getWeekMatchByCode(code: string){
       return this.http.get<any>(environment.apiUrl + environment.getWeeksMatch +'?code='+code, {headers: this.corsHeaders})
     }
 
-    createCsv(){
-      const body = [{}]
+    createCsv(league: string, season: string, group: string, team: string, first: number, last:number, extractAllWeeks: Boolean, extractStats:Boolean, extractRanking: Boolean){
+      league = this.removeAccents(league)
+      season = this.removeAccents(season)
+      group = this.removeAccents(group)
+      group = group.replace("Liga Regular ","").replace('"', "").replace('"', "").replace("-", "")
+      team = this.removeAccents(team)
+      const body ={league: league, season: season, group: group, team: team, first: first, last: last, extractAllWeeks: extractAllWeeks, extractStats: extractStats, extractRanking: extractRanking}
+      console.log(body)
       return this.http.post<any>(environment.apiUrl + environment.createCsv, body, {headers: this.corsHeaders} )
     }
 }
+
+

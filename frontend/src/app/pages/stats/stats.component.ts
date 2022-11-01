@@ -43,6 +43,9 @@ export class StatsComponent implements OnInit {
   weekMatchLast = []
   selectedWMI = 0
   selectedWML = 0
+  extractAllWeeks: Boolean = true
+  extractStatsTeam: Boolean = true
+  extractRanking: Boolean = true
 
   
   teamsAuto: Observable<Team[]> | undefined;
@@ -78,7 +81,6 @@ export class StatsComponent implements OnInit {
 
   private getTeamsGroups(year: string, league: string){
     this.apiService.getAllTeamsByLeagueYear(year, league).subscribe(data => {
-      console.log(data)
       for (let i= 0; i< data.length; ++i){
         for(let j = 0; j<data[i].length; ++j){
           
@@ -157,7 +159,6 @@ export class StatsComponent implements OnInit {
 
       let teamsOfGroup = this.teams.filter(team => team.index == group.value.toString())
       
-      console.log(!teamsOfGroup.find(team => team.value == this.selectedTeam))
       if(!teamsOfGroup.find(team => team.value == this.selectedTeam)) this.resetTeams()
 
       
@@ -171,25 +172,26 @@ export class StatsComponent implements OnInit {
           return name ? this._filterTeamsByGroup(teamAux, name) : teamAux.slice();
         })
       )
+      this.getWeekMatch()
   }
 
   teamSelected(team: any){
-    console.log(typeof team.team)
-    console.log(this.teams)
-
+    this.selectedTeam=team.team
+    
     let find = this.teams.find(team1 => team1.value== team.team)
     if (find) this.selectedGroup= find.index
-    console.log(this.selectedGroup)
+    this.getWeekMatch()
+  }
+
+  extractStats(){
+    this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, this.selectedTeam, 
+          this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking).subscribe(data =>{
+            console.log(data)
+          })
   }
 
 
-
-
-
-
-
-
-
+  
 
 
 
