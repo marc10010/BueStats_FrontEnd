@@ -52,4 +52,9 @@ export class ApiService{
     getWeekMatchByCode(code: string){
       return this.http.get<any>(environment.apiUrl + environment.getWeeksMatch +'?code='+code, {headers: this.corsHeaders})
     }
+
+    createCsv(){
+      const body = [{}]
+      return this.http.post<any>(environment.apiUrl + environment.createCsv, body, {headers: this.corsHeaders} )
+    }
 }

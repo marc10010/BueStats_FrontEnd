@@ -10,18 +10,25 @@
   .parent {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: repeat(5, 1fr);
+    grid-template-rows: auto, repeat(2, 1fr);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
+    height: fit-content;
     }
     
-    .league { grid-area: 1 / 1 / 2 / 2; padding: 5px;}
-    .season { grid-area: 1 / 2 / 2 / 3; padding: 5px;}
-    .group { grid-area: 1 / 3 / 2 / 4; padding: 5px;}
-    .team { grid-area: 1 / 4 / 2 / 5; padding: 5px;}
-    .weekI { grid-area: 1 / 5 / 2 / 6; padding: 5px;}
-    .weekF { grid-area: 1 / 6 / 2 / 7; padding: 5px;}
-    .topTeam { grid-area: 2 / 1 / 3 / 3; padding: 5px;}
-    .botTeam { grid-area: 2 / 3 / 3 / 5; padding: 5px;}
-    .checks { grid-area: 2 / 5 / 3 / 6; padding: 5px; }
-    .search { grid-area: 2 / 6 / 3 / 7; padding: 5px; }
+    .league { grid-area: 1 / 1 / 2 / 2;  padding: 5px; block-size: fit-content;}
+    .season { grid-area: 1 / 2 / 2 / 3;  padding: 5px; block-size: fit-content;}
+    .group { grid-area: 1 / 3 / 2 / 4;   padding: 5px; block-size: fit-content;}
+    .team { grid-area: 1 / 4 / 2 / 5;    padding: 5px; block-size: fit-content;}
+    .weekI { grid-area: 1 / 5 / 2 / 6;   padding: 5px; block-size: fit-content;}
+    .weekF { grid-area: 1 / 6 / 2 / 7;   padding: 5px; block-size: fit-content;}
+    .topTeam { grid-area: 2 / 1 / 3 / 3; padding: 5px; block-size: fit-content;}
+    .botTeam { grid-area: 2 / 3 / 3 / 5; padding: 5px; block-size: fit-content;}
+    .checks { grid-area: 2 / 5 / 3 / 6;  padding: 5px; block-size: fit-content;}
+    .search { grid-area: 2 / 6 / 3 / 7;  padding: 5px; block-size: fit-content;}
+
+    .buttonSearch{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
