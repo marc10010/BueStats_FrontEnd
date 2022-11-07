@@ -38,6 +38,7 @@ export class StatsComponent implements OnInit {
   leagues: optionsMap[] = [];
   seasons: optionsMap[] = [];
   teams: optionsMap[] = [];
+  teamsNotUsed: string[] = [];
   groups: optionsMap[] = [];
   weekMatchInit = []
   weekMatchLast = []
@@ -54,6 +55,7 @@ export class StatsComponent implements OnInit {
   selectedTopTeams : string[]=[]
   teamsBotAuto: Observable<string[]> |undefined
   selectedBotTeams : string[]=[]
+  teamsAutoSelect: Observable<string[]> |undefined
 
   ngOnInit(): void {
     this.getLeagues()
@@ -124,10 +126,14 @@ export class StatsComponent implements OnInit {
         startWith(null),
         map( (team: string|null) => (team ? this._filterTopTeam(team): this.teams.map(t => {return t.value}).slice())))
       
-        this.teamsBotAuto = this.botTeamCtrl.valueChanges.pipe(
+      this.teamsBotAuto = this.botTeamCtrl.valueChanges.pipe(
           startWith(null),
-          map( (team: string|null) => (team ? this._filterBotTeam(team): this.teams.map(t => {return t.value}).slice())))
-      })
+          map( (team: string|null) => (team ? this._filterTopTeam(team): this.teams.map(t => {return t.value}).slice())))
+
+      this.teamsAutoSelect = this.botTeamCtrl.valueChanges.pipe(
+        startWith(null),
+        map( (team: string|null) => (team ? this._filterBotTeam(team): this.teamsNotUsed.map(t => {  return t }).slice())))
+    })
   }
 
   private getWeekMatch(){
@@ -226,8 +232,12 @@ export class StatsComponent implements OnInit {
   
   private _filterTopTeam(value: string) {
     let options = this.teams.map(value => {return value.value})
+    console.log("filter ", options)
+    console.log("filter value", value)
+    console.log("filter selectedTop", this.selectedTopTeams)
+    console.log("bool: ", this.selectedTopTeams.includes(value))
     const filterValue = value.toLowerCase();
-    return options.filter(team => team.toLowerCase().includes(filterValue) ) //&& !this.selectedTopTeams.includes(team)
+    return options.filter(team => team.toLowerCase().includes(filterValue) && !this.selectedTopTeams.includes(team) ) //&& !this.selectedTopTeams.includes(team)
   }
 
   addTop(event: MatChipInputEvent): void{
