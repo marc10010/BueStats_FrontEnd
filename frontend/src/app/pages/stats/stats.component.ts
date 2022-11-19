@@ -122,11 +122,11 @@ export class StatsComponent implements OnInit {
     
       this.teamsTopAuto = this.topTeamCtrl.valueChanges.pipe(
         startWith(null),
-        map( (team: string|null) => (team ? this._filterTopTeam(team): this.teams.map(t => {return t.value}).slice())))
+        map( (team: string|null) => (this.filterNonUsed().slice())))
       
         this.teamsBotAuto = this.botTeamCtrl.valueChanges.pipe(
           startWith(null),
-          map( (team: string|null) => (team ? this._filterBotTeam(team): this.teams.map(t => {return t.value}).slice())))
+          map( (team: string|null) => (this.filterNonUsed().slice())))
       })
   }
 
@@ -224,11 +224,7 @@ export class StatsComponent implements OnInit {
     return []
   }
   
-  private _filterTopTeam(value: string) {
-    let options = this.teams.map(value => {return value.value})
-    const filterValue = value.toLowerCase();
-    return options.filter(team => team.toLowerCase().includes(filterValue) ) //&& !this.selectedTopTeams.includes(team)
-  }
+
 
   addTop(event: MatChipInputEvent): void{
     const value = (event.value || '').trim();
@@ -260,12 +256,12 @@ export class StatsComponent implements OnInit {
     this.topTeamCtrl.setValue(null);
   }
 
-
-  private _filterBotTeam(value: string) {
+  private filterNonUsed(){
+    console.log('filterNonUsed')
     let options = this.teams.map(value => {return value.value})
-    const filterValue = value.toLowerCase();
-    return options.filter(team => team.toLowerCase().includes(filterValue) ) //&& !this.selectedBotTeams.includes(team)
+    return options.filter(team => !(this.selectedBotTeams.includes(team)) && !(this.selectedTopTeams.includes(team)) && team != this.selectedTeam) 
   }
+
 
   addBot(event: MatChipInputEvent): void{
     const value = (event.value || '').trim();
