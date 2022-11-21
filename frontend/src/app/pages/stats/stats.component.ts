@@ -46,6 +46,8 @@ export class StatsComponent implements OnInit {
   extractAllWeeks: Boolean = true
   extractStatsTeam: Boolean = true
   extractRanking: Boolean = true
+  streamlitVisible: Boolean = false
+  streamlitTeam = ""
 
   
   teamsAuto: Observable<Team[]> | undefined;
@@ -184,9 +186,11 @@ export class StatsComponent implements OnInit {
   }
 
   extractStats(){
+    this.streamlitTeam=''
     this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, this.selectedTeam, 
           this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking).subscribe(data =>{
             console.log(data)
+            this.streamlitTeam= data
           })
   }
 

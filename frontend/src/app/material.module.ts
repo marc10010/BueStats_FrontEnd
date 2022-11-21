@@ -11,6 +11,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import {MatTabsModule} from '@angular/material/tabs';
+
 
 
 
@@ -28,6 +30,7 @@ const modulosMaterial = [
     MatChipsModule,
     MatIconModule,
     MatCheckboxModule,
+    MatTabsModule
 
 ]
 
