@@ -63,7 +63,7 @@
     <div class="weekI">
       <mat-form-field appearance="fill" fxFlex="fxFill">
         <mat-label>First Week Match</mat-label>
-        <mat-select [(ngModel)]="selectedWMI" [disabled]="!selectedLeague">
+        <mat-select [(ngModel)]="selectedWMI" [disabled]="!selectedTeam">
           <mat-option *ngFor="let weekMatch of weekMatchInit" [value]="weekMatch">
             Weekmatch {{weekMatch}}
           </mat-option>
@@ -74,7 +74,7 @@
     <div class="weekF">
       <mat-form-field appearance="fill" fxFlex="fxFill">
         <mat-label>Last Week Match</mat-label>
-        <mat-select [(ngModel)]="selectedWML" [disabled]="!selectedLeague">
+        <mat-select [(ngModel)]="selectedWML" [disabled]="!selectedWMI">
           <mat-option *ngFor="let weekMatch of weekMatchInit" [value]="weekMatch">
             Weekmatch {{weekMatch}}
           </mat-option>
@@ -83,6 +83,7 @@
      </div>
 
     <div class="topTeam">
+      <!--
       <mat-form-field  appearance="fill" fxFlex="fxFill">
         <mat-label>TOP Teams</mat-label>
         <mat-chip-list #TopList aria-label="Top selection" [disabled]="!selectedLeague">
@@ -111,9 +112,12 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
+      -->
 
     </div>
+    
     <div class="botTeam">
+      <!--
       <mat-form-field appearance="fill" fxFlex="fxFill">
         <mat-label>Bottom Teams</mat-label>
         <mat-chip-list #BotList aria-label="Bottom selection" [disabled]="!selectedLeague">
@@ -141,6 +145,7 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
+      -->
     </div>
     
     <div class="checks">
@@ -155,57 +160,22 @@
 
     <div class="search" >
       <div class="buttonSearch">
-        <button mat-raised-button (click)="extractStats()" >Search</button>
+        <button [disabled]="!selectedWML" mat-raised-button (click)="extractStats()" >Search</button>
       </div>
       
     </div>
   </div>
+  <h2 *ngIf="cargaCompleta==1">
+    Estamos generando Datos, Porfavor espera
+  </h2>
+  <p *ngIf="cargaCompleta==2">
+    Datos Cargados
+  </p>
   <div>
-    <mat-tab-group *ngIf="streamlitTeam!=''" preserveContent [selectedIndex]="0">
-      
-      <mat-tab label="Generated Dataframes">  
-       <iframe  class="iframe"
-        src="http://buestats.redirectme.net:8502/Generated_Dataframes"></iframe>
-      </mat-tab>
+    <iframe class="iframe" src="http://buestats.redirectme.net:8502">
 
-      <mat-tab label="Download Data">
-        <!-- src="http://buestats.redirectme.net:8502/Download_Data?team="streamlitTeam -->
-        <iframe  class="iframe"
-        src="http://localhost:8501/Download_Data?team={{streamlitTeam}}"></iframe>
-      </mat-tab>
-
-      <mat-tab label="Game Shots">
-        <iframe  class="iframe"
-        src="http://buestats.redirectme.net:8502/Visualize_Game_Shots"></iframe>
-      </mat-tab>
-
-      <mat-tab label="Team Data">
-        <iframe  class="iframe"
-        src="http://buestats.redirectme.net:8502/Explore_Team_Data"></iframe>
-      </mat-tab>
-      
-      <mat-tab label="Head To Head">
-        <iframe  class="iframe"
-        
-        src="http://buestats.redirectme.net:8502/Head_to_Head"></iframe>
-      </mat-tab>
-
-      <mat-tab label="Ranking">
-        <iframe  class="iframe"
-        src="http://buestats.redirectme.net:8502/Ranking"></iframe>
-      </mat-tab>
-
-      <mat-tab label="Scouting">
-        <iframe  class="iframe"
-        src="http://buestats.redirectme.net:8502/Scouting"></iframe>
-      </mat-tab>
-
-      <mat-tab label="Similarity Tools">
-        <iframe  class="iframe"
-        src="http://buestats.redirectme.net:8502/Similarity_Tool"></iframe>
-      </mat-tab>
-
-    </mat-tab-group>
+    </iframe>
   </div>
+
 
 </div>

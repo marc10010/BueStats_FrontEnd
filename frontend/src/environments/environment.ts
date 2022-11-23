@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   apiUrl: 'http://127.0.0.1:5000/',
-  dashApp: 'http://127.0.0.1:8502',
+  //dashApp: 'http://127.0.0.1:8502',
   //apiUrl: 'https://buestats.redirectme.net:5000/api/',
   htmlCalendar: 'https://baloncestoenvivo.feb.es/calendario/',
   getSeasons:'getSeasonsByLeague',

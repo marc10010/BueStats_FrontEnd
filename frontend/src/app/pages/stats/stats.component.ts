@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, Sanitizer, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipInputEvent} from '@angular/material/chips';
@@ -7,6 +7,8 @@ import { map, Observable, startWith, of } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { optionsMap, Team } from 'src/app/types/api';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { DomSanitizer } from "@angular/platform-browser"; 
+
 
 @Component({
   selector: 'app-stats',
@@ -19,6 +21,7 @@ export class StatsComponent implements OnInit {
   @ViewChild('botTeamInput') botTeamInput:ElementRef<HTMLInputElement> | undefined
   constructor(
     private apiService: ApiService,
+    private sanitizer: DomSanitizer
   ) {
     this.teamControl.disable()
     this.groupControl.disable()
@@ -46,8 +49,9 @@ export class StatsComponent implements OnInit {
   extractAllWeeks: Boolean = true
   extractStatsTeam: Boolean = true
   extractRanking: Boolean = true
-  streamlitVisible: Boolean = false
+  hasTeam: Boolean = false
   streamlitTeam = ""
+  cargaCompleta: number = 0
 
   
   teamsAuto: Observable<Team[]> | undefined;
@@ -133,14 +137,11 @@ export class StatsComponent implements OnInit {
   }
 
   private getWeekMatch(){
+    console.log("week match", this.selectedGroup, this.selectedSeason, this.selectedLeague)
     if(this.selectedGroup){
-      let codeLeague = this.groups.find(test => test.value==this.selectedGroup)
-      if(codeLeague){
-        this.apiService.getWeekMatchByCode(codeLeague.index).subscribe(data =>{
+        this.apiService.getWeekMatchByCode(this.selectedSeason, this.selectedLeague).subscribe(data =>{
           this.weekMatchInit= data
         })
-      }
-
     }
   }
 
@@ -187,10 +188,17 @@ export class StatsComponent implements OnInit {
 
   extractStats(){
     this.streamlitTeam=''
+    this.cargaCompleta =1
+    
+    this.hasTeam= false 
     this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, this.selectedTeam, 
-          this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking).subscribe(data =>{
-            console.log(data)
+          this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking).subscribe(data =>{            
             this.streamlitTeam= data
+            this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, 'LIGA', 
+              this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking).subscribe(data =>{            
+                this.streamlitTeam= data
+                this.cargaCompleta =2
+              })
           })
   }
 
@@ -325,6 +333,11 @@ export class StatsComponent implements OnInit {
   private resetBottom(){
     this.botTeamCtrl.reset()
     this.selectedBotTeams = []
+  }
+
+  photoURL(url: string, extra: boolean) {
+    if(extra) return this.sanitizer.bypassSecurityTrustResourceUrl(url + this.streamlitTeam);
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
 }
