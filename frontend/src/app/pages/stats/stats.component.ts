@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, Sanitizer, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Sanitizer, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipInputEvent} from '@angular/material/chips';
@@ -19,7 +19,9 @@ export class StatsComponent implements OnInit {
   
   @ViewChild('topTeamInput') topTeamInput:ElementRef<HTMLInputElement> | undefined
   @ViewChild('botTeamInput') botTeamInput:ElementRef<HTMLInputElement> | undefined
+  @ViewChild('myiFrame') myframe:ElementRef<HTMLIFrameElement> |undefined ;
   constructor(
+    private cdref: ChangeDetectorRef,
     private apiService: ApiService,
     private sanitizer: DomSanitizer
   ) {
@@ -35,7 +37,7 @@ export class StatsComponent implements OnInit {
 
   separatorKeysCodes: number[] = [ENTER, COMMA];
   selectedLeague = ""
-  selectedSeason = (new Date().getFullYear()).toString()
+  selectedSeason = ""
   selectedTeam = ""
   selectedGroup =""
   leagues: optionsMap[] = [];
@@ -51,7 +53,8 @@ export class StatsComponent implements OnInit {
   extractRanking: Boolean = true
   hasTeam: Boolean = false
   streamlitTeam = ""
-  cargaCompleta: number = 0
+  streamlitLeague = ""
+  cargaCompleta = 0
 
   
   teamsAuto: Observable<Team[]> | undefined;
@@ -66,7 +69,6 @@ export class StatsComponent implements OnInit {
     if (history.state.data) {
       this.selectedLeague =history.state.data.league
       this.getSeasonsByLeague(this.selectedLeague)
-      this.getTeamsGroups(this.selectedSeason, this.selectedLeague)
     }
     else{
      
@@ -80,12 +82,16 @@ export class StatsComponent implements OnInit {
   }
   
   private getSeasonsByLeague(league: string){
+    this.seasons=[]
     this.apiService.getSeasonsByLegue(league).subscribe(data => {
       this.seasons = data.map((season: string) => ({index: season.substring(0,4), value: season}))
+      this.teamControl.enable()
     })
   }
 
   private getTeamsGroups(year: string, league: string){
+    this.teams= []
+    this.groups=[]
     this.apiService.getAllTeamsByLeagueYear(year, league).subscribe(data => {
       for (let i= 0; i< data.length; ++i){
         for(let j = 0; j<data[i].length; ++j){
@@ -138,6 +144,7 @@ export class StatsComponent implements OnInit {
 
   private getWeekMatch(){
     console.log("week match", this.selectedGroup, this.selectedSeason, this.selectedLeague)
+    this.weekMatchInit=[]
     if(this.selectedGroup){
         this.apiService.getWeekMatchByCode(this.selectedSeason, this.selectedLeague).subscribe(data =>{
           this.weekMatchInit= data
@@ -149,7 +156,7 @@ export class StatsComponent implements OnInit {
   changeLeague(league: string){
     this.resetAll()
     this.getSeasonsByLeague(league);
-    this.getTeamsGroups(this.selectedSeason.substring(0,4), league)
+    //this.getTeamsGroups(this.selectedSeason.substring(0,4), league)
   }
   changeSeason(season: string){
     this.resetAll()
@@ -188,6 +195,7 @@ export class StatsComponent implements OnInit {
 
   extractStats(){
     this.streamlitTeam=''
+    this.streamlitLeague=''
     this.cargaCompleta =1
     
     this.hasTeam= false 
@@ -196,8 +204,9 @@ export class StatsComponent implements OnInit {
             this.streamlitTeam= data
             this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, 'LIGA', 
               this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking).subscribe(data =>{            
-                this.streamlitTeam= data
+                this.streamlitLeague= data
                 this.cargaCompleta =2
+                this.cdref.detectChanges()
               })
           })
   }
@@ -320,6 +329,8 @@ export class StatsComponent implements OnInit {
   private resetTeams(){
     this.teamControl.reset()
     this.selectedTeam=""
+    this.teamsAuto = undefined 
+    this.teamControl.disable()
     this.teams = []
     this.resetTop()
     this.resetBottom()
@@ -335,8 +346,9 @@ export class StatsComponent implements OnInit {
     this.selectedBotTeams = []
   }
 
-  photoURL(url: string, extra: boolean) {
-    if(extra) return this.sanitizer.bypassSecurityTrustResourceUrl(url + this.streamlitTeam);
+  getSource() {
+    let url = "http://buestats.redirectme.net:8502/?team_searched=" + this.streamlitTeam.toUpperCase()+"&league_searched="+this.streamlitLeague.toUpperCase()
+    console.log(url)
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 

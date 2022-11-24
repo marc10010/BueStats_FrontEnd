@@ -27,7 +27,7 @@
 
       <mat-form-field appearance="fill" fxFlex="fxFill">
         <mat-label>Group</mat-label>
-        <mat-select [(ngModel)]="selectedGroup" [disabled]="!selectedLeague"(selectionChange)="groupSelected($event)" >
+        <mat-select [disabled]="teamsAuto==undefined" [(ngModel)]="selectedGroup" (selectionChange)="groupSelected($event)" >
           <mat-option *ngFor="let group of groups" [value]="group.value">
             {{group.value}}
           </mat-option>
@@ -47,12 +47,11 @@
       </mat-form-field>
 -->
      </div>
-
     <div class="team"> 
       <mat-form-field appearance="fill" fxFlex="fxFill">
         <mat-label>Team</mat-label>
-        <input type="text" matInput [formControl]="teamControl" [matAutocomplete]="autoTeam">
-        <mat-autocomplete #autoTeam="matAutocomplete" [displayWith]="displayFn"(optionSelected)="teamSelected($event.option.value)">
+        <input matInput [disabled]="!selectedSeason" type="text"  [formControl]="teamControl" [matAutocomplete]="autoTeam">
+        <mat-autocomplete  #autoTeam="matAutocomplete" [displayWith]="displayFn"(optionSelected)="teamSelected($event.option.value)">
           <mat-option *ngFor="let team of teamsAuto | async" [value]="team" >
             {{team.team}}
           </mat-option>
@@ -165,14 +164,12 @@
       
     </div>
   </div>
+  
   <h2 *ngIf="cargaCompleta==1">
-    Estamos generando Datos, Porfavor espera
+    Estamos generando datos. Por favor, espera
   </h2>
-  <p *ngIf="cargaCompleta==2">
-    Datos Cargados
-  </p>
-  <div>
-    <iframe class="iframe" src="http://buestats.redirectme.net:8502">
+  <div  *ngIf="cargaCompleta==2">
+    <iframe #myiFrame class="iframe" [src]="getSource()">
 
     </iframe>
   </div>
