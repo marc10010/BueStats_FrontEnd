@@ -1,3 +1,4 @@
+
 <!--Div con los desplegables -->
 <div>
   <div class="parent">
@@ -26,7 +27,7 @@
 
       <mat-form-field appearance="fill" fxFlex="fxFill">
         <mat-label>Group</mat-label>
-        <mat-select [(ngModel)]="selectedGroup" [disabled]="!selectedLeague"(selectionChange)="groupSelected($event)" >
+        <mat-select [disabled]="teamsAuto==undefined" [(ngModel)]="selectedGroup" (selectionChange)="groupSelected($event)" >
           <mat-option *ngFor="let group of groups" [value]="group.value">
             {{group.value}}
           </mat-option>
@@ -46,12 +47,11 @@
       </mat-form-field>
 -->
      </div>
-
     <div class="team"> 
       <mat-form-field appearance="fill" fxFlex="fxFill">
         <mat-label>Team</mat-label>
-        <input type="text" matInput [formControl]="teamControl" [matAutocomplete]="autoTeam">
-        <mat-autocomplete #autoTeam="matAutocomplete" [displayWith]="displayFn"(optionSelected)="teamSelected($event.option.value)">
+        <input matInput [disabled]="selectedSeason==''" type="text"  [formControl]="teamControl" [matAutocomplete]="autoTeam">
+        <mat-autocomplete  #autoTeam="matAutocomplete" [displayWith]="displayFn"(optionSelected)="teamSelected($event.option.value)">
           <mat-option *ngFor="let team of teamsAuto | async" [value]="team" >
             {{team.team}}
           </mat-option>
@@ -62,7 +62,7 @@
     <div class="weekI">
       <mat-form-field appearance="fill" fxFlex="fxFill">
         <mat-label>First Week Match</mat-label>
-        <mat-select [(ngModel)]="selectedWMI" [disabled]="!selectedLeague">
+        <mat-select [(ngModel)]="selectedWMI" [disabled]="!selectedTeam">
           <mat-option *ngFor="let weekMatch of weekMatchInit" [value]="weekMatch">
             Weekmatch {{weekMatch}}
           </mat-option>
@@ -73,7 +73,7 @@
     <div class="weekF">
       <mat-form-field appearance="fill" fxFlex="fxFill">
         <mat-label>Last Week Match</mat-label>
-        <mat-select [(ngModel)]="selectedWML" [disabled]="!selectedLeague">
+        <mat-select [(ngModel)]="selectedWML" [disabled]="!selectedWMI">
           <mat-option *ngFor="let weekMatch of weekMatchInit" [value]="weekMatch">
             Weekmatch {{weekMatch}}
           </mat-option>
@@ -82,6 +82,7 @@
      </div>
 
     <div class="topTeam">
+      <!--
       <mat-form-field  appearance="fill" fxFlex="fxFill">
         <mat-label>TOP Teams</mat-label>
         <mat-chip-list #TopList aria-label="Top selection" [disabled]="!selectedLeague">
@@ -110,9 +111,12 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
+      -->
 
     </div>
+    
     <div class="botTeam">
+      <!--
       <mat-form-field appearance="fill" fxFlex="fxFill">
         <mat-label>Bottom Teams</mat-label>
         <mat-chip-list #BotList aria-label="Bottom selection" [disabled]="!selectedLeague">
@@ -140,6 +144,7 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
+      -->
     </div>
     
     <div class="checks">
@@ -154,15 +159,20 @@
 
     <div class="search" >
       <div class="buttonSearch">
-        <button mat-raised-button (click)="extractStats()" >Search</button>
+        <button [disabled]="!selectedWML" mat-raised-button (click)="extractStats()" >Search</button>
       </div>
       
     </div>
   </div>
-    <div class="card-container">
   
+  <h2 *ngIf="cargaCompleta==1">
+    Estamos generando datos. Por favor, espera
+  </h2>
+  <div  *ngIf="cargaCompleta==2">
+    <iframe #myiFrame class="iframe" [src]="getSource()">
 
+    </iframe>
+  </div>
 
-    </div>
 
 </div>

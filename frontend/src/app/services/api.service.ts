@@ -50,8 +50,8 @@ export class ApiService{
       return this.http.get<any>(environment.apiUrl + environment.getAllTeams+"?league=" +this.removeAccents(league) +"&year=" + year, {headers: this.corsHeaders})
     }
 
-    getWeekMatchByCode(code: string){
-      return this.http.get<any>(environment.apiUrl + environment.getWeeksMatch +'?code='+code, {headers: this.corsHeaders})
+    getWeekMatchByCode(year: string, league: string){
+      return this.http.get<any>(environment.apiUrl + environment.getWeeksMatch +"?league=" +this.removeAccents(league) +"&year=" + year, {headers: this.corsHeaders})
     }
 
     createCsv(league: string, season: string, group: string, team: string, first: number, last:number, extractAllWeeks: Boolean, extractStats:Boolean, extractRanking: Boolean){
