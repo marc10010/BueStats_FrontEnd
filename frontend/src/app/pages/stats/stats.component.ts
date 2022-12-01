@@ -43,6 +43,7 @@ export class StatsComponent implements OnInit {
   leagues: optionsMap[] = [];
   seasons: optionsMap[] = [];
   teams: optionsMap[] = [];
+  teamsNotUsed: string[] = [];
   groups: optionsMap[] = [];
   weekMatchInit = []
   weekMatchLast = []
@@ -63,6 +64,7 @@ export class StatsComponent implements OnInit {
   selectedTopTeams : string[]=[]
   teamsBotAuto: Observable<string[]> |undefined
   selectedBotTeams : string[]=[]
+  teamsAutoSelect: Observable<string[]> |undefined
 
   ngOnInit(): void {
     this.getLeagues()
@@ -136,7 +138,7 @@ export class StatsComponent implements OnInit {
         startWith(null),
         map( (team: string|null) => (this.filterNonUsed().slice())))
       
-        this.teamsBotAuto = this.botTeamCtrl.valueChanges.pipe(
+      this.teamsBotAuto = this.botTeamCtrl.valueChanges.pipe(
           startWith(null),
           map( (team: string|null) => (this.filterNonUsed().slice())))
       })
@@ -246,7 +248,15 @@ export class StatsComponent implements OnInit {
     return []
   }
   
-
+  private _filterTopTeam(value: string) {
+    let options = this.teams.map(value => {return value.value})
+    console.log("filter ", options)
+    console.log("filter value", value)
+    console.log("filter selectedTop", this.selectedTopTeams)
+    console.log("bool: ", this.selectedTopTeams.includes(value))
+    const filterValue = value.toLowerCase();
+    return options.filter(team => team.toLowerCase().includes(filterValue) && !this.selectedTopTeams.includes(team) ) //&& !this.selectedTopTeams.includes(team)
+  }
 
   addTop(event: MatChipInputEvent): void{
     const value = (event.value || '').trim();

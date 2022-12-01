@@ -106,7 +106,7 @@
 
         </mat-chip-list>
         <mat-autocomplete #autoTop="matAutocomplete" (optionSelected)="selectedTop($event)">
-          <mat-option *ngFor="let team of teamsTopAuto | async" [value]="team">
+          <mat-option *ngFor="let team of teamsAutoSelect | async" [value]="team">
             {{team}}
           </mat-option>
         </mat-autocomplete>
@@ -139,7 +139,7 @@
 
         </mat-chip-list>
         <mat-autocomplete #autoBot="matAutocomplete" (optionSelected)="selectedBot($event)">
-          <mat-option *ngFor="let team of teamsBotAuto | async" [value]="team">
+          <mat-option *ngFor="let team of teamsAutoSelect | async" [value]="team">
             {{team}}
           </mat-option>
         </mat-autocomplete>
