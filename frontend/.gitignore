@@ -44,3 +44,9 @@ Thumbs.db
 #extras
 /.angular
 /.vscode
+
+/frontend/.angular
+/frontend/.vscode
+/frontend/.*
+/frontend/dist
+/frontend/node_modules
