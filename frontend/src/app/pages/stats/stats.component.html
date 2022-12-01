@@ -50,7 +50,7 @@
     <div class="team"> 
       <mat-form-field appearance="fill" fxFlex="fxFill">
         <mat-label>Team</mat-label>
-        <input matInput [disabled]="!selectedSeason" type="text"  [formControl]="teamControl" [matAutocomplete]="autoTeam">
+        <input matInput [disabled]="selectedSeason==''" type="text"  [formControl]="teamControl" [matAutocomplete]="autoTeam">
         <mat-autocomplete  #autoTeam="matAutocomplete" [displayWith]="displayFn"(optionSelected)="teamSelected($event.option.value)">
           <mat-option *ngFor="let team of teamsAuto | async" [value]="team" >
             {{team.team}}

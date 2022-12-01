@@ -85,7 +85,7 @@ export class StatsComponent implements OnInit {
     this.seasons=[]
     this.apiService.getSeasonsByLegue(league).subscribe(data => {
       this.seasons = data.map((season: string) => ({index: season.substring(0,4), value: season}))
-      this.teamControl.enable()
+      
     })
   }
 
@@ -197,7 +197,8 @@ export class StatsComponent implements OnInit {
     this.streamlitTeam=''
     this.streamlitLeague=''
     this.cargaCompleta =1
-    
+    console.log(this.selectedTeam)
+    console.log(this.teams)
     this.hasTeam= false 
     this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, this.selectedTeam, 
           this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking).subscribe(data =>{            
