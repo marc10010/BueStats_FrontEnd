@@ -70,9 +70,6 @@ export class StatsComponent implements OnInit {
       this.selectedLeague =history.state.data.league
       this.getSeasonsByLeague(this.selectedLeague)
     }
-    else{
-     
-    }
   }
 
   private getLeagues(){
@@ -100,6 +97,9 @@ export class StatsComponent implements OnInit {
         }
         this.groups.push({'index': data[i][0][0], 'value': data[i][0][1]})
       }
+
+      console.log(this.teams)
+      console.log(this.groups)
       
 
 
@@ -114,7 +114,7 @@ export class StatsComponent implements OnInit {
       
       this.teamControl.enable()
       this.groupControl.enable()
-      this.getWeekMatch()
+      //this.getWeekMatch()
 
       this.teamsAuto = this.teamControl.valueChanges.pipe(
         startWith(""),
@@ -148,6 +148,8 @@ export class StatsComponent implements OnInit {
     if(this.selectedGroup){
         this.apiService.getWeekMatchByCode(this.selectedSeason, this.selectedLeague).subscribe(data =>{
           this.weekMatchInit= data
+          this.selectedWMI = this.weekMatchInit[0]
+          this.selectedWML = this.weekMatchInit[data.length -1]  
         })
     }
   }
@@ -167,49 +169,58 @@ export class StatsComponent implements OnInit {
   
   groupSelected(group: any){
 
+      console.log(this.teams)
+      this.selectedTeam=""
+      this.teamControl.reset()
+      this.selectedWMI = 0
+      this.selectedWML = 0
       let teamsOfGroup = this.teams.filter(team => team.index == group.value.toString())
-      
-      if(!teamsOfGroup.find(team => team.value == this.selectedTeam)) this.resetTeams()
-
+    
       
       let teamAux :Team[] = teamsOfGroup.map((value: any) => {
         return {team: value.value}
       })
+    
       this.teamsAuto = this.teamControl.valueChanges.pipe(
         startWith(""),
         map(value=>{
           const name = typeof value === 'string' ? value : value?.team;
-          return name ? this._filterTeamsByGroup(teamAux, name) : teamAux.slice();
+          return name ? this._filterTeams(teamAux as Team[], name as string) : teamAux.slice();
         })
       )
-      this.getWeekMatch()
+      this.teamControl.enable()
+      //this.getWeekMatch()
   }
 
   teamSelected(team: any){
     this.selectedTeam=team.team
+
     
     let find = this.teams.find(team1 => team1.value== team.team)
     if (find) this.selectedGroup= find.index
     this.getWeekMatch()
+    console.log(this.weekMatchInit)
   }
 
   extractStats(){
-    this.streamlitTeam=''
-    this.streamlitLeague=''
-    this.cargaCompleta =1
-    console.log(this.selectedTeam)
-    console.log(this.teams)
-    this.hasTeam= false 
-    this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, this.selectedTeam, 
-          this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking).subscribe(data =>{            
-            this.streamlitTeam= data
-            this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, 'LIGA', 
-              this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking).subscribe(data =>{            
-                this.streamlitLeague= data
-                this.cargaCompleta =2
-                this.cdref.detectChanges()
-              })
-          })
+    if (this.selectedWMI > this.selectedWML){
+      alert("jornada incial >= jornada final")
+    }
+    else{
+      this.streamlitTeam=''
+      this.streamlitLeague=''
+      this.cargaCompleta =1
+      this.hasTeam= false 
+    
+      this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, this.selectedTeam, this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking).subscribe(data =>{            
+        this.streamlitTeam= data
+        this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, 'LIGA', this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking).subscribe(data =>{            
+          this.streamlitLeague= data
+          this.cargaCompleta =2
+          this.cdref.detectChanges()
+        })
+      })
+    }
   }
 
 
