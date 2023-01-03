@@ -26,10 +26,12 @@ export class StatsComponent implements OnInit {
     private sanitizer: DomSanitizer
   ) {
     this.teamControl.disable()
+    this.teamRivalControl.disable()
     this.groupControl.disable()
     }
 
   teamControl = new FormControl<string | Team >("")
+  teamRivalControl = new FormControl<string | Team >("")
   groupControl = new FormControl<string | Team >("")
   topTeamCtrl = new FormControl('');
   botTeamCtrl = new FormControl('');
@@ -39,10 +41,12 @@ export class StatsComponent implements OnInit {
   selectedLeague = ""
   selectedSeason = ""
   selectedTeam = ""
+  selectedTeamRival = ""
   selectedGroup =""
   leagues: optionsMap[] = [];
   seasons: optionsMap[] = [];
   teams: optionsMap[] = [];
+  teamsRival: optionsMap[] = [];
   groups: optionsMap[] = [];
   weekMatchInit = []
   weekMatchLast = []
@@ -53,11 +57,13 @@ export class StatsComponent implements OnInit {
   extractRanking: Boolean = true
   hasTeam: Boolean = false
   streamlitTeam = ""
+  streamlitRival = ''
   streamlitLeague = ""
   cargaCompleta = 0
 
   
   teamsAuto: Observable<Team[]> | undefined;
+  teamsAutoRival: Observable<Team[]> | undefined;
   groupsAuto: Observable<Team[]> | undefined;
   teamsTopAuto: Observable<string[]> |undefined
   selectedTopTeams : string[]=[]
@@ -113,10 +119,18 @@ export class StatsComponent implements OnInit {
       })
       
       this.teamControl.enable()
+      this.teamRivalControl.enable()
       this.groupControl.enable()
       //this.getWeekMatch()
 
       this.teamsAuto = this.teamControl.valueChanges.pipe(
+        startWith(""),
+        map( value=>{
+          const name = typeof value === 'string' ? value : value?.team;
+          return name ? this._filterTeams(teamsAux as Team[], name as string) : teamsAux.slice();
+        })
+      )
+      this.teamsAutoRival = this.teamRivalControl.valueChanges.pipe(
         startWith(""),
         map( value=>{
           const name = typeof value === 'string' ? value : value?.team;
@@ -131,7 +145,7 @@ export class StatsComponent implements OnInit {
           return name ? this._filterGroups(groupsAux as Team[], name as string) : groupsAux.slice();
         })
       )
-    
+    /*
       this.teamsTopAuto = this.topTeamCtrl.valueChanges.pipe(
         startWith(null),
         map( (team: string|null) => (this.filterNonUsed().slice())))
@@ -139,6 +153,7 @@ export class StatsComponent implements OnInit {
         this.teamsBotAuto = this.botTeamCtrl.valueChanges.pipe(
           startWith(null),
           map( (team: string|null) => (this.filterNonUsed().slice())))
+    */
       })
   }
 
@@ -171,7 +186,9 @@ export class StatsComponent implements OnInit {
 
       console.log(this.teams)
       this.selectedTeam=""
+      this.selectedTeamRival=""
       this.teamControl.reset()
+      this.teamRivalControl.reset()
       this.selectedWMI = 0
       this.selectedWML = 0
       let teamsOfGroup = this.teams.filter(team => team.index == group.value.toString())
@@ -189,6 +206,15 @@ export class StatsComponent implements OnInit {
         })
       )
       this.teamControl.enable()
+
+      this.teamsAutoRival = this.teamRivalControl.valueChanges.pipe(
+        startWith(""),
+        map(value=>{
+          const name = typeof value === 'string' ? value : value?.team;
+          return name ? this._filterTeams(teamAux as Team[], name as string) : teamAux.slice();
+        })
+      )
+      this.teamRivalControl.enable()
       //this.getWeekMatch()
   }
 
@@ -202,19 +228,31 @@ export class StatsComponent implements OnInit {
     console.log(this.weekMatchInit)
   }
 
+  teamRivalSelected(team: any){
+    this.selectedTeamRival=team.team
+
+    
+    let find = this.teamsRival.find(team1 => team1.value== team.team)
+    if (find) this.selectedGroup= find.index
+    this.getWeekMatch()
+  }
+
   extractStats(){
     if (this.selectedWMI > this.selectedWML){
       alert("jornada incial >= jornada final")
     }
     else{
       this.streamlitTeam=''
+      this.streamlitRival=''
       this.streamlitLeague=''
       this.cargaCompleta =1
       this.hasTeam= false 
     
-      this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, this.selectedTeam, this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking).subscribe(data =>{            
-        this.streamlitTeam= data
-        this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, 'LIGA', this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking).subscribe(data =>{            
+      this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, this.selectedTeam, this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking, this.selectedTeamRival).subscribe(data =>{            
+        this.streamlitTeam= data[0]
+        this.streamlitRival = data[1]
+        console.log(this.streamlitTeam, this.streamlitRival)
+        this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, 'LIGA', this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking, '').subscribe(data =>{            
           this.streamlitLeague= data
           this.cargaCompleta =2
           this.cdref.detectChanges()
@@ -341,6 +379,7 @@ export class StatsComponent implements OnInit {
   private resetTeams(){
     this.teamControl.reset()
     this.selectedTeam=""
+    this.selectedTeamRival=""
     this.teamsAuto = undefined 
     this.teamControl.disable()
     this.teams = []
@@ -359,7 +398,7 @@ export class StatsComponent implements OnInit {
   }
 
   getSource() {
-    let url = "http://buestats.redirectme.net:8502/?team_searched=" + this.streamlitTeam.toUpperCase()+"&league_searched="+this.streamlitLeague.toUpperCase()
+    let url = "http://buestats.redirectme.net:8502/?team_searched=" + this.streamlitTeam.toUpperCase()+"&rival_searched="+this.streamlitRival.toUpperCase()+"&league_searched="+this.streamlitLeague.toUpperCase()
     console.log(url)
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
