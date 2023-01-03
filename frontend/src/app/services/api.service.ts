@@ -54,14 +54,16 @@ export class ApiService{
       return this.http.get<any>(environment.apiUrl + environment.getWeeksMatch +"?league=" +this.removeAccents(league) +"&year=" + year, {headers: this.corsHeaders})
     }
 
-    createCsv(league: string, season: string, group: string, team: string, first: number, last:number, extractAllWeeks: Boolean, extractStats:Boolean, extractRanking: Boolean){
+    createCsv(league: string, season: string, group: string, team: string, first: number, last:number, extractAllWeeks: Boolean, extractStats:Boolean, extractRanking: Boolean, teamRival: string){
       league = this.removeAccents(league)
       season = this.removeAccents(season)
       group = this.removeAccents(group)
       group = group.replace("Liga Regular ","").replace('"', "").replace('"', "").replace("-", "")
       team = this.removeAccents(team)
       team = team.replace("Ç", "C")
-      const body ={league: league, season: season, group: group, team: team, first: first, last: last, extractAllWeeks: extractAllWeeks, extractStats: extractStats, extractRanking: extractRanking}
+      teamRival = this.removeAccents(teamRival)
+      teamRival = teamRival.replace("Ç", "C")
+      const body ={league: league, season: season, group: group, team: team, first: first, last: last, extractAllWeeks: extractAllWeeks, extractStats: extractStats, extractRanking: extractRanking, teamRival: teamRival}
       console.log(body)
       return this.http.post<any>(environment.apiUrl + environment.createCsv, body, {headers: this.corsHeaders} )
     }
