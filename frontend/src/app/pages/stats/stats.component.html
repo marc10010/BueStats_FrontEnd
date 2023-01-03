@@ -82,6 +82,15 @@
      </div>
 
     <div class="topTeam">
+      <mat-form-field appearance="fill" fxFlex="fxFill">
+        <mat-label>Team scouting</mat-label>
+        <input matInput type="text"  [formControl]="teamRivalControl" [matAutocomplete]="autoTeamRival">
+        <mat-autocomplete  #autoTeamRival="matAutocomplete" [displayWith]="displayFn"(optionSelected)="teamRivalSelected($event.option.value)">
+          <mat-option *ngFor="let team of teamsAutoRival | async" [value]="team"   >
+            {{team.team}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
       <!--
       <mat-form-field  appearance="fill" fxFlex="fxFill">
         <mat-label>TOP Teams</mat-label>
