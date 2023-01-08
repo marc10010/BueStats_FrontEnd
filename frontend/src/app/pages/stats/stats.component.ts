@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, OnInit, Sanitizer, ViewChild 
 import { FormControl } from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipInputEvent} from '@angular/material/chips';
-
+import { environment } from 'src/environments/environment';
 import { map, Observable, startWith, of } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { optionsMap, Team } from 'src/app/types/api';
@@ -104,11 +104,7 @@ export class StatsComponent implements OnInit {
         this.groups.push({'index': data[i][0][0], 'value': data[i][0][1]})
       }
 
-      console.log(this.teams)
-      console.log(this.groups)
-      
-
-
+  
       let teamsAux: Team[] = this.teams.map((value: any) => {
           return {team: value.value}
       })
@@ -158,7 +154,7 @@ export class StatsComponent implements OnInit {
   }
 
   private getWeekMatch(){
-    console.log("week match", this.selectedGroup, this.selectedSeason, this.selectedLeague)
+    ////console.log("week match", this.selectedGroup, this.selectedSeason, this.selectedLeague)
     this.weekMatchInit=[]
     if(this.selectedGroup){
         this.apiService.getWeekMatchByCode(this.selectedSeason, this.selectedLeague).subscribe(data =>{
@@ -181,10 +177,10 @@ export class StatsComponent implements OnInit {
   }
 
   
-  
+  group_selected = ""
   groupSelected(group: any){
-
-      console.log(this.teams)
+      this.group_selected=group
+      //console.log(this.teams)
       this.selectedTeam=""
       this.selectedTeamRival=""
       this.teamControl.reset()
@@ -225,7 +221,7 @@ export class StatsComponent implements OnInit {
     let find = this.teams.find(team1 => team1.value== team.team)
     if (find) this.selectedGroup= find.index
     this.getWeekMatch()
-    console.log(this.weekMatchInit)
+    ////console.log(this.weekMatchInit)
   }
 
   teamRivalSelected(team: any){
@@ -247,11 +243,17 @@ export class StatsComponent implements OnInit {
       this.streamlitLeague=''
       this.cargaCompleta =1
       this.hasTeam= false 
-    
+      if(this.selectedTeamRival==""){
+        this.selectedTeamRival = this.teams.filter(team => team.index == this.selectedGroup)[0].value
+        
+        if (this.selectedTeamRival == this.selectedTeam) this.selectedTeamRival = this.teams.filter(team => team.index == this.selectedGroup)[1].value
+        
+      }
+
       this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, this.selectedTeam, this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking, this.selectedTeamRival).subscribe(data =>{            
         this.streamlitTeam= data[0]
         this.streamlitRival = data[1]
-        console.log(this.streamlitTeam, this.streamlitRival)
+        //console.log(this.streamlitTeam, this.streamlitRival)
         this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, 'LIGA', this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking, '').subscribe(data =>{            
           this.streamlitLeague= data
           this.cargaCompleta =2
@@ -328,7 +330,7 @@ export class StatsComponent implements OnInit {
   }
 
   private filterNonUsed(){
-    console.log('filterNonUsed')
+    //console.log('filterNonUsed')
     let options = this.teams.map(value => {return value.value})
     return options.filter(team => !(this.selectedBotTeams.includes(team)) && !(this.selectedTopTeams.includes(team)) && team != this.selectedTeam) 
   }
@@ -398,8 +400,8 @@ export class StatsComponent implements OnInit {
   }
 
   getSource() {
-    let url = "http://buestats.redirectme.net:8502/?team_searched=" + this.streamlitTeam.toUpperCase()+"&rival_searched="+this.streamlitRival.toUpperCase()+"&league_searched="+this.streamlitLeague.toUpperCase()
-    console.log(url)
+    let url = environment.streamlit +"?team_searched=" + this.streamlitTeam.toUpperCase()+"&rival_searched="+this.streamlitRival.toUpperCase()+"&league_searched="+this.streamlitLeague.toUpperCase()
+    //console.log(url)
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 

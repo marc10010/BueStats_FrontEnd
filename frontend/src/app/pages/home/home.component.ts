@@ -25,7 +25,6 @@ export class HomeComponent implements OnInit {
   }
 
   stats(league: string){
-    console.log(league);
     this.router.navigate(['/stats'], {state: {data:{league}}})
   }
 

@@ -64,7 +64,7 @@ export class ApiService{
       teamRival = this.removeAccents(teamRival)
       teamRival = teamRival.replace("Ç", "C")
       const body ={league: league, season: season, group: group, team: team, first: first, last: last, extractAllWeeks: extractAllWeeks, extractStats: extractStats, extractRanking: extractRanking, teamRival: teamRival}
-      console.log(body)
+      //console.log(body)
       return this.http.post<any>(environment.apiUrl + environment.createCsv, body, {headers: this.corsHeaders} )
     }
 }
