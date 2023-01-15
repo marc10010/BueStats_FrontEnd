@@ -43,3 +43,21 @@
       border:none;
       overflow:hidden
     }
+  .loader_div{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 2fr, 1fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+  }
+  
+  .loader_spinner { 
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    grid-area: 1 / 1 / 2 / 2; }
+  .loader_msg { 
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    grid-area: 2 / 1 / 3 / 2; }

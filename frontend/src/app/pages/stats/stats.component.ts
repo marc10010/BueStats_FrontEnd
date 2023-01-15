@@ -60,6 +60,8 @@ export class StatsComponent implements OnInit {
   streamlitRival = ''
   streamlitLeague = ""
   cargaCompleta = 0
+  loading:Boolean = false
+  msg_loading = "loading data"
 
   
   teamsAuto: Observable<Team[]> | undefined;
@@ -95,6 +97,9 @@ export class StatsComponent implements OnInit {
   private getTeamsGroups(year: string, league: string){
     this.teams= []
     this.groups=[]
+    this.loading = true
+    this.msg_loading="Buscando grupos y equipos"
+    
     this.apiService.getAllTeamsByLeagueYear(year, league).subscribe(data => {
       for (let i= 0; i< data.length; ++i){
         for(let j = 0; j<data[i].length; ++j){
@@ -103,7 +108,6 @@ export class StatsComponent implements OnInit {
         }
         this.groups.push({'index': data[i][0][0], 'value': data[i][0][1]})
       }
-
   
       let teamsAux: Team[] = this.teams.map((value: any) => {
           return {team: value.value}
@@ -117,6 +121,8 @@ export class StatsComponent implements OnInit {
       this.teamControl.enable()
       this.teamRivalControl.enable()
       this.groupControl.enable()
+      this.loading = false
+    
       //this.getWeekMatch()
 
       this.teamsAuto = this.teamControl.valueChanges.pipe(
@@ -216,10 +222,25 @@ export class StatsComponent implements OnInit {
 
   teamSelected(team: any){
     this.selectedTeam=team.team
-
-    
     let find = this.teams.find(team1 => team1.value== team.team)
     if (find) this.selectedGroup= find.index
+    
+    let teamsOfGroup = this.teams.filter(team => team.index == this.selectedGroup)
+    
+      
+    let teamsAux :Team[] = teamsOfGroup.map((value: any) => {
+        return {team: value.value}
+      })
+
+    
+    this.teamsAutoRival = this.teamRivalControl.valueChanges.pipe(
+      startWith(""),
+      map( value=>{
+        const name = typeof value === 'string' ? value : value?.team;
+        return name ? this._filterTeams(teamsAux as Team[], name as string) : teamsAux.slice();
+      })
+    )
+    
     this.getWeekMatch()
     ////console.log(this.weekMatchInit)
   }
@@ -230,7 +251,6 @@ export class StatsComponent implements OnInit {
     
     let find = this.teamsRival.find(team1 => team1.value== team.team)
     if (find) this.selectedGroup= find.index
-    this.getWeekMatch()
   }
 
   extractStats(){
@@ -249,15 +269,18 @@ export class StatsComponent implements OnInit {
         if (this.selectedTeamRival == this.selectedTeam) this.selectedTeamRival = this.teams.filter(team => team.index == this.selectedGroup)[1].value
         
       }
-
+      this.loading=true
+      this.msg_loading="Generando data de equipos, por favor espera un poco"
       this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, this.selectedTeam, this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking, this.selectedTeamRival).subscribe(data =>{            
         this.streamlitTeam= data[0]
         this.streamlitRival = data[1]
         //console.log(this.streamlitTeam, this.streamlitRival)
+      this.msg_loading="Generando data de la liga, por favor espera un poco"
         this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, 'LIGA', this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking, '').subscribe(data =>{            
           this.streamlitLeague= data
           this.cargaCompleta =2
           this.cdref.detectChanges()
+          this.loading=false
         })
       })
     }
