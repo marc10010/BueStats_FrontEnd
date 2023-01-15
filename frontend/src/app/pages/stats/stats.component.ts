@@ -1,19 +1,19 @@
 import { ChangeDetectorRef, Component, ElementRef, OnInit, Sanitizer, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {MatChipInputEvent} from '@angular/material/chips';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatChipInputEvent } from '@angular/material/chips';
 import { environment } from 'src/environments/environment';
 import { map, Observable, startWith, of } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { optionsMap, Team } from 'src/app/types/api';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { DomSanitizer } from "@angular/platform-browser"; 
-
+import { DomSanitizer } from "@angular/platform-browser";
+import {  MatSnackBar,  MatSnackBarHorizontalPosition,  MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-stats',
   templateUrl: './stats.component.html',
-  styleUrls: ['./stats.component.scss']
+  styleUrls: ['./stats.component.scss'],
 })
 export class StatsComponent implements OnInit {
   
@@ -21,9 +21,10 @@ export class StatsComponent implements OnInit {
   @ViewChild('botTeamInput') botTeamInput:ElementRef<HTMLInputElement> | undefined
   @ViewChild('myiFrame') myframe:ElementRef<HTMLIFrameElement> |undefined ;
   constructor(
+    private _snackBar: MatSnackBar,
     private cdref: ChangeDetectorRef,
     private apiService: ApiService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
   ) {
     this.teamControl.disable()
     this.teamRivalControl.disable()
@@ -72,7 +73,14 @@ export class StatsComponent implements OnInit {
   teamsBotAuto: Observable<string[]> |undefined
   selectedBotTeams : string[]=[]
 
+
+  
+  horizontalPosition: MatSnackBarHorizontalPosition = 'center';
+  verticalPosition: MatSnackBarVerticalPosition = 'top';
+
   ngOnInit(): void {
+    if('https:' == window.location.protocol) this.openSnackBar()
+
     this.getLeagues()
     if (history.state.data) {
       this.selectedLeague =history.state.data.league
@@ -426,6 +434,14 @@ export class StatsComponent implements OnInit {
     let url = environment.streamlit +"?team_searched=" + this.streamlitTeam.toUpperCase()+"&rival_searched="+this.streamlitRival.toUpperCase()+"&league_searched="+this.streamlitLeague.toUpperCase()
     //console.log(url)
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
+
+  openSnackBar() {
+    this._snackBar.open("Estas accediendo a esta web con 'HTTPS', Para ver la información deberas acceder a traves de 'http://buestats.redirectme.net'", 'Cerrar', {
+      horizontalPosition: this.horizontalPosition,
+      verticalPosition: this.verticalPosition,
+    });
   }
 
 }
