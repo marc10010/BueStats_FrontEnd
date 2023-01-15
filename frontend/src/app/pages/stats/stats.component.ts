@@ -79,6 +79,8 @@ export class StatsComponent implements OnInit {
   verticalPosition: MatSnackBarVerticalPosition = 'top';
 
   ngOnInit(): void {
+    console.log("estamos en stats")
+    console.log(window.location.protocol)
     if('https:' == window.location.protocol) this.openSnackBar()
 
     this.getLeagues()
