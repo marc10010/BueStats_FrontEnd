@@ -9,6 +9,8 @@ import { optionsMap, Team } from 'src/app/types/api';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { DomSanitizer } from "@angular/platform-browser";
 import {  MatSnackBar,  MatSnackBarHorizontalPosition,  MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import {MatDialog} from '@angular/material/dialog';
+import { DialogContentErrors } from 'src/app/dialogs/dialog-content-error';
 
 @Component({
   selector: 'app-stats',
@@ -21,6 +23,7 @@ export class StatsComponent implements OnInit {
   @ViewChild('botTeamInput') botTeamInput:ElementRef<HTMLInputElement> | undefined
   @ViewChild('myiFrame') myframe:ElementRef<HTMLIFrameElement> |undefined ;
   constructor(
+    public dialog: MatDialog,
     private _snackBar: MatSnackBar,
     private cdref: ChangeDetectorRef,
     private apiService: ApiService,
@@ -81,7 +84,7 @@ export class StatsComponent implements OnInit {
   ngOnInit(): void {
     console.log("estamos en stats")
     console.log(window.location.protocol)
-    if('https:' == window.location.protocol) this.openSnackBar()
+    if('https:' == window.location.protocol) this.openSnackBar("Estas accediendo a esta web con 'HTTPS', Para ver la información deberas acceder a traves de 'http://buestats.redirectme.net'")
 
     this.getLeagues()
     if (history.state.data) {
@@ -285,13 +288,41 @@ export class StatsComponent implements OnInit {
         this.streamlitTeam= data[0]
         this.streamlitRival = data[1]
         //console.log(this.streamlitTeam, this.streamlitRival)
-      this.msg_loading="Generando data de la liga, por favor espera un poco"
+        this.msg_loading="Generando data de la liga, por favor espera un poco"
         this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, 'LIGA', this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking, '').subscribe(data =>{            
           this.streamlitLeague= data
           this.cargaCompleta =2
           this.cdref.detectChanges()
           this.loading=false
+        },
+        error=>{
+          this.cargaCompleta=0
+          this.loading =false
+          if(error.status ==404){
+            this.dialog.open(DialogContentErrors, {
+            data: {title: "Error generando datos de la liga", msg: "Lo sentimos, el analisis de este grupo no esta disponible"},
+            });
+          }
+          if(error.status ==500) {
+            this.dialog.open(DialogContentErrors, {
+              data: {title: "UPS! Algo ha salido mal", msg: "Por favor vuelva a intentarlo mas tarde"},
+              });
+          }
         })
+      },
+      error=>{
+        this.cargaCompleta=0
+        this.loading =false
+        if(error.status ==404){
+          this.dialog.open(DialogContentErrors, {
+          data: {title: "Error generando datos del equipo", msg: "Lo sentimos, el analisis de este grupo no esta disponible"},
+          });
+        }
+        if(error.status ==500) {
+          this.dialog.open(DialogContentErrors, {
+            data: {title: "UPS! Algo ha salido mal", msg: "Por favor vuelva a intentarlo mas tarde"},
+            });
+        }
       })
     }
   }
@@ -299,7 +330,11 @@ export class StatsComponent implements OnInit {
 
   
 
-
+  openDialog(msg_title:string, msg:string): void {
+    this.dialog.open(DialogContentErrors, {
+      data: {title: msg_title, animal: msg},
+    });
+  }
 
 
 
@@ -439,11 +474,13 @@ export class StatsComponent implements OnInit {
   }
 
 
-  openSnackBar() {
-    this._snackBar.open("Estas accediendo a esta web con 'HTTPS', Para ver la información deberas acceder a traves de 'http://buestats.redirectme.net'", 'Cerrar', {
-      horizontalPosition: this.horizontalPosition,
-      verticalPosition: this.verticalPosition,
+  openSnackBar(msg: string, horizontal=this.horizontalPosition, vertical=this.verticalPosition) {
+    this._snackBar.open(msg, 'Cerrar', {
+      horizontalPosition: horizontal,
+      verticalPosition: vertical,
     });
   }
 
 }
+
+

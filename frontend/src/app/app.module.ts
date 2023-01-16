@@ -10,6 +10,7 @@ import { StatsComponent } from './pages/stats/stats.component';
 import { HomeComponent } from './pages/home/home.component';
 import { HeaderComponent } from './pages/header/header.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { DialogContentErrors } from './dialogs/dialog-content-error';
 
 
 @NgModule({
@@ -18,6 +19,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     StatsComponent,
     HomeComponent,
     HeaderComponent,
+    DialogContentErrors,
   ],
   imports: [
     BrowserModule,
