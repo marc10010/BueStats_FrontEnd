@@ -22,6 +22,7 @@
     "@angular/router": "^14.2.0",
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
+    "flag-icon-css": "^4.1.7",
     "remove-accents": "^0.4.4",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",

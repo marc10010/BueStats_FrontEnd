@@ -9,3 +9,24 @@ mat-toolbar {
   .cerrar{
     align-content: flex-end;
   }
+
+  .lang{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+  }
+  .selector_lang{
+    width: 40px;
+    margin-right: 30px;
+    margin-left: 15px;
+    margin-bottom: -9px;
+  }
+
+  ::ng-deep .mat-select-arrow-wrapper.ng-tns-c132-1 {
+    display: none;
+  }
+  ::ng-deep .mat-form-field-underline.ng-tns-c126-0.ng-star-inserted{
+    display: none;
+  }
+  

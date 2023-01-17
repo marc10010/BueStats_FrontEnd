@@ -1,6 +1,7 @@
 {
     "header":{
-        "home": "Home"
+        "Home": "Home",
+        "Language":"Language"
     },
     "dialog":{
         "Close": "Close"

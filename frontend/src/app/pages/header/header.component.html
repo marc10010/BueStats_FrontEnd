@@ -1,11 +1,17 @@
 <mat-toolbar color = "primary" fxLayoutAlign="space-between center">
     <div class="d-inline-block" >
-        <button [routerLink]="['/home']" mat-button>{{"header.home" | translate}} </button>
+        <button [routerLink]="['/home']" mat-button>{{"header.Home" | translate}} </button>
     </div>
-    <div>
-        <button (click)="changeLanguage()"  mat-button>Esp </button>
-    </div>
-    <div> 
+     
+    <div class="lang">
+        <mat-form-field class="selector_lang" >
+            <mat-select [(ngModel)]="selectedLang" (selectionChange)="changeLang(selectedLang)">
+              <mat-option *ngFor="let lang of langs" [value]="lang">
+                <img with="20px" height="20px" src={{lang.flag}}>   {{lang.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        
         <span>BueStats 2.0</span>
     </div>
 
