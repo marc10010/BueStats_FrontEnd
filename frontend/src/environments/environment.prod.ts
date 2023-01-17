@@ -1,6 +1,8 @@
 export const environment = {
   production: true,
-  dashApp: 'http://buestats.redirectme.net:8502/Generated_Dataframes',
+  //apiUrl: 'http://127.0.0.1:5000/',
+  //streamlit: 'http://127.0.0.1:8501',
+  streamlit: 'http://buestats.redirectme.net:8502/',
   apiUrl: 'https://buestats.redirectme.net:5000/api/',
   htmlCalendar: 'https://baloncestoenvivo.feb.es/calendario/',
   getSeasons:'getSeasonsByLeague',

@@ -11,7 +11,12 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+import {DialogModule} from '@angular/cdk/dialog';
+
 
 
 
@@ -30,8 +35,11 @@ const modulosMaterial = [
     MatChipsModule,
     MatIconModule,
     MatCheckboxModule,
-    MatTabsModule
-
+    MatTabsModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    DialogModule
 ]
 
 @NgModule({

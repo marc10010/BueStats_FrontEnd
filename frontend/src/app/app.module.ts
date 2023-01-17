@@ -10,7 +10,15 @@ import { StatsComponent } from './pages/stats/stats.component';
 import { HomeComponent } from './pages/home/home.component';
 import { HeaderComponent } from './pages/header/header.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { DialogContentErrors } from './dialogs/dialog-content-error';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 
+
+export function HttpLoaderFactory(http:HttpClient){
+
+  return new TranslateHttpLoader(http)
+}
 
 @NgModule({
   declarations: [
@@ -18,6 +26,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     StatsComponent,
     HomeComponent,
     HeaderComponent,
+    DialogContentErrors,
   ],
   imports: [
     BrowserModule,
@@ -27,7 +36,14 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     BrowserAnimationsModule,
     FormsModule,
     FlexLayoutModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslateModule.forRoot( {
+      loader:{
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    }),
 
   ],
   providers: [],
