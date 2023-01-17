@@ -1,0 +1,40 @@
+{
+    "header":{
+        "home": "Home"
+    },
+    "dialog":{
+        "Close": "Close"
+    },
+    "home":{
+        "GameShots": "Shot chart by game",
+        "TeamData": "Stats of the team",
+        "H2H": "Head 2 Head",
+        "Ranks": "Rankings",
+        "ScoutRival": "Scouting of teams",
+        "SimiTool": "Similarity tool for players",
+        "More" : "And more..."
+    },
+    "stats":{
+        "League": "League",
+        "Season": "Season",
+        "Group": "Group",
+        "Team": "Team",
+        "WMI": "First weekmatch",
+        "WML": "Last weekmatch",
+        "WM": "Weekmatch",
+        "TeamScout": "Rival team",
+        "Search": "Search",
+        "msg_loading1": "Loading data...",
+        "msg_loading2": "Searching groups and teams...",
+        "msg_loading3": "Generating teams data, please wait",
+        "msg_loading4": "Generating league data, please wait a bit longer it is almost finished",
+        "error_title1": "Error generating league data",
+        "error_msg1": "We are sorry, this group is not available",
+        "error_title2": "UPS! Something went wrong",
+        "error_msg2": "Please try it again later",
+        "error_title3": "Error generating team data",
+        "error_msg3": "We are sorry, this group is not available",
+        "alert": "Alert!",
+        "alert_msg": "First weekmatch can not be greater than last weekmatch"
+    }
+}

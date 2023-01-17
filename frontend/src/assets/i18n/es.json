@@ -1,0 +1,41 @@
+{
+    "header":{
+        "home": "Inicio"
+    },
+    "dialog":{
+        "Close": "Cerrar"
+    },
+    "home":{
+        "GameShots": "Gráfico de tiros por partido",
+        "TeamData": "Estadísticas del equipo",
+        "H2H": "Head 2 Head",
+        "Ranks": "Rankings",
+        "ScoutRival": "Scouting de equipos",
+        "SimiTool": "Herramienta de similitud de jugadores",
+        "More" : "Y mas..."
+    },
+    "stats":{
+        "League": "Liga",
+        "Season": "Temporada",
+        "Group": "Grupo",
+        "Team": "Equipo",
+        "WMI": "Primera jornada",
+        "WML": "Última jornada",
+        "WM": "Jornada",
+        "TeamScout": "Equipo Rival",
+        "Search": "Buscar",
+        "msg_loading1": "Cargando datos...",
+        "msg_loading2": "Buscando Grupos y equipos...",
+        "msg_loading3": "Generando datos de Equipo, por favor espera",
+        "msg_loading4": "Generando datos de la liga, por favor espera un poco más",
+        "error_title1": "Error generando datos de la liga",
+        "error_msg1": "Lo sentimos, este grupo no esta disponible",
+        "error_title2": "Ups! Algo ha salido mal",
+        "error_msg2": "Por favor intentelo de nuevo mas tarde",
+        "error_title3": "Error generando datos de la liga",
+        "error_msg3": "Lo sentimos, este grupo no esta disponible",
+        "alert": "Alerta!",
+        "alert_msg": "La primera jornada no puede ser posterior a la última jornada"
+    }
+    
+}

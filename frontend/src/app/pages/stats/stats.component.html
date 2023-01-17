@@ -4,7 +4,7 @@
   <div class="parent">
     <div class="league"> 
       <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>League</mat-label>
+        <mat-label>{{"stats.League" | translate}}</mat-label>
         <mat-select [(ngModel)]="selectedLeague" (selectionChange)="changeLeague(selectedLeague)">
           <mat-option *ngFor="let league of leagues" [value]="league.index">
             {{league.value}}
@@ -14,7 +14,7 @@
     </div>
     <div class="season"> 
       <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>season</mat-label>
+        <mat-label>{{"stats.Season" | translate}}</mat-label>
         <mat-select [(ngModel)]="selectedSeason" (selectionChange)="changeSeason(selectedSeason)" [disabled]="!selectedLeague">
           <mat-option *ngFor="let season of seasons" [value]="season.index">
             {{season.value}}
@@ -25,7 +25,7 @@
 
     <div class="group">
       <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>Group</mat-label>
+        <mat-label>{{"stats.Group" | translate}}</mat-label>
         <mat-select [disabled]="teamsAuto==undefined" [(ngModel)]="selectedGroup" (selectionChange)="groupSelected($event)" >
           <mat-option *ngFor="let group of groups" [value]="group.value">
             {{group.value}}
@@ -48,7 +48,7 @@
      </div>
     <div class="team"> 
       <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>Team</mat-label>
+        <mat-label>{{"stats.Team" | translate}}</mat-label>
         <input matInput type="text"  [formControl]="teamControl" [matAutocomplete]="autoTeam">
         <mat-autocomplete  #autoTeam="matAutocomplete" [displayWith]="displayFn"(optionSelected)="teamSelected($event.option.value)">
           <mat-option *ngFor="let team of teamsAuto | async" [value]="team"   >
@@ -60,10 +60,10 @@
 
     <div class="weekI">
       <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>First Week Match</mat-label>
+        <mat-label>{{"stats.WMI" | translate}}</mat-label>
         <mat-select [(ngModel)]="selectedWMI" [disabled]="!selectedTeam">
           <mat-option *ngFor="let weekMatch of weekMatchInit" [value]="weekMatch">
-            Weekmatch {{weekMatch}}
+            {{"stats.WM" | translate}} {{weekMatch}}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -71,10 +71,10 @@
 
     <div class="weekF">
       <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>Last Week Match</mat-label>
+        <mat-label>{{"stats.WML" | translate}}</mat-label>
         <mat-select [(ngModel)]="selectedWML" [disabled]="!selectedWMI">
           <mat-option *ngFor="let weekMatch of weekMatchInit" [value]="weekMatch">
-            Weekmatch {{weekMatch}}
+            {{"stats.WM" | translate}} {{weekMatch}}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -82,7 +82,7 @@
 
     <div class="topTeam">
       <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>Team scouting</mat-label>
+        <mat-label>{{"stats.TeamScout" | translate}}</mat-label>
         <input matInput type="text"  [formControl]="teamRivalControl" [matAutocomplete]="autoTeamRival">
         <mat-autocomplete  #autoTeamRival="matAutocomplete" [displayWith]="displayFn"(optionSelected)="teamRivalSelected($event.option.value)">
           <mat-option *ngFor="let team of teamsAutoRival | async" [value]="team"   >
@@ -169,7 +169,7 @@
 
     <div class="search" >
       <div class="buttonSearch">
-        <button [disabled]="!selectedWML" mat-raised-button (click)="extractStats()" >Search</button>
+        <button [disabled]="!selectedWML" mat-raised-button (click)="extractStats()" >{{"stats.Search" | translate}}</button>
       </div>
       
     </div>

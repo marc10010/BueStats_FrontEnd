@@ -11,6 +11,8 @@ import { DomSanitizer } from "@angular/platform-browser";
 import {  MatSnackBar,  MatSnackBarHorizontalPosition,  MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import { DialogContentErrors } from 'src/app/dialogs/dialog-content-error';
+import { AppComponent } from 'src/app/app.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-stats',
@@ -22,12 +24,14 @@ export class StatsComponent implements OnInit {
   @ViewChild('topTeamInput') topTeamInput:ElementRef<HTMLInputElement> | undefined
   @ViewChild('botTeamInput') botTeamInput:ElementRef<HTMLInputElement> | undefined
   @ViewChild('myiFrame') myframe:ElementRef<HTMLIFrameElement> |undefined ;
+  
   constructor(
     public dialog: MatDialog,
     private _snackBar: MatSnackBar,
     private cdref: ChangeDetectorRef,
     private apiService: ApiService,
     private sanitizer: DomSanitizer,
+    private translate: TranslateService
   ) {
     this.teamControl.disable()
     this.teamRivalControl.disable()
@@ -65,7 +69,8 @@ export class StatsComponent implements OnInit {
   streamlitLeague = ""
   cargaCompleta = 0
   loading:Boolean = false
-  msg_loading = "loading data"
+  msg_loading = this.translate.instant('stats.msg_loading1')
+
 
   
   teamsAuto: Observable<Team[]> | undefined;
@@ -80,10 +85,9 @@ export class StatsComponent implements OnInit {
   
   horizontalPosition: MatSnackBarHorizontalPosition = 'center';
   verticalPosition: MatSnackBarVerticalPosition = 'top';
+  getSource_sanitize = this.getSource()
 
   ngOnInit(): void {
-    console.log("estamos en stats")
-    console.log(window.location.protocol)
     if('https:' == window.location.protocol) this.openSnackBar("Estas accediendo a esta web con 'HTTPS', Para ver la información deberas acceder a traves de 'http://buestats.redirectme.net'")
 
     this.getLeagues()
@@ -111,7 +115,7 @@ export class StatsComponent implements OnInit {
     this.teams= []
     this.groups=[]
     this.loading = true
-    this.msg_loading="Buscando grupos y equipos"
+    this.msg_loading=this.translate.instant('stats.msg_loading2')
     
     this.apiService.getAllTeamsByLeagueYear(year, league).subscribe(data => {
       for (let i= 0; i< data.length; ++i){
@@ -191,7 +195,8 @@ export class StatsComponent implements OnInit {
     //this.getTeamsGroups(this.selectedSeason.substring(0,4), league)
   }
   changeSeason(season: string){
-    this.resetAll()
+    this.resetGroup()
+    this.resetTeams()
     this.getTeamsGroups(season, this.selectedLeague)
   }
 
@@ -204,8 +209,7 @@ export class StatsComponent implements OnInit {
       this.selectedTeamRival=""
       this.teamControl.reset()
       this.teamRivalControl.reset()
-      this.selectedWMI = 0
-      this.selectedWML = 0
+      this.resetWeeks()
       let teamsOfGroup = this.teams.filter(team => team.index == group.value.toString())
     
       
@@ -268,12 +272,12 @@ export class StatsComponent implements OnInit {
 
   extractStats(){
     if (this.selectedWMI > this.selectedWML){
-      alert("jornada incial >= jornada final")
+      this.dialog.open(DialogContentErrors, {
+        data: {title: this.translate.instant("stats.alert"), msg: this.translate.instant("stats.alert_msg")},
+      });
     }
     else{
-      this.streamlitTeam=''
-      this.streamlitRival=''
-      this.streamlitLeague=''
+      this.hide_iframe()
       this.cargaCompleta =1
       this.hasTeam= false 
       if(this.selectedTeamRival==""){
@@ -283,29 +287,32 @@ export class StatsComponent implements OnInit {
         
       }
       this.loading=true
-      this.msg_loading="Generando data de equipos, por favor espera un poco"
+      this.msg_loading=this.translate.instant('stats.msg_loading3')
       this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, this.selectedTeam, this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking, this.selectedTeamRival).subscribe(data =>{            
-        this.streamlitTeam= data[0]
+        this.streamlitTeam = data[0]
         this.streamlitRival = data[1]
         //console.log(this.streamlitTeam, this.streamlitRival)
-        this.msg_loading="Generando data de la liga, por favor espera un poco"
+        this.msg_loading=this.translate.instant('stats.msg_loading4')
         this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, 'LIGA', this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking, '').subscribe(data =>{            
           this.streamlitLeague= data
           this.cargaCompleta =2
-          this.cdref.detectChanges()
           this.loading=false
+          this.getSource()
+
+          
+        
         },
         error=>{
           this.cargaCompleta=0
           this.loading =false
           if(error.status ==404){
             this.dialog.open(DialogContentErrors, {
-            data: {title: "Error generando datos de la liga", msg: "Lo sentimos, el analisis de este grupo no esta disponible"},
+            data: {title: this.translate.instant('stats.error_title1'), msg: this.translate.instant('stats.error_msg1')},
             });
           }
           if(error.status ==500) {
             this.dialog.open(DialogContentErrors, {
-              data: {title: "UPS! Algo ha salido mal", msg: "Por favor vuelva a intentarlo mas tarde"},
+              data: {title: this.translate.instant('stats.error_title2'), msg: this.translate.instant('stats.error_msg2')},
               });
           }
         })
@@ -315,12 +322,12 @@ export class StatsComponent implements OnInit {
         this.loading =false
         if(error.status ==404){
           this.dialog.open(DialogContentErrors, {
-          data: {title: "Error generando datos del equipo", msg: "Lo sentimos, el analisis de este grupo no esta disponible"},
+          data: {title: this.translate.instant('stats.error_title3'), msg: this.translate.instant('stats.error_msg2')},
           });
         }
         if(error.status ==500) {
           this.dialog.open(DialogContentErrors, {
-            data: {title: "UPS! Algo ha salido mal", msg: "Por favor vuelva a intentarlo mas tarde"},
+            data: {title: this.translate.instant('stats.error_title2'), msg: this.translate.instant('stats.error_msg2')},
             });
         }
       })
@@ -436,8 +443,18 @@ export class StatsComponent implements OnInit {
 
 
   private resetAll(){
+    this.resetYears()
     this.resetGroup()
     this.resetTeams()
+  }
+
+  private resetYears(){
+    this.selectedSeason = ''
+  }
+
+  private hide_iframe(){
+    this.loading=false;
+    this.cargaCompleta=0;
   }
 
   private resetGroup(){
@@ -448,13 +465,25 @@ export class StatsComponent implements OnInit {
 
   private resetTeams(){
     this.teamControl.reset()
+    this.teamRivalControl.reset()
     this.selectedTeam=""
     this.selectedTeamRival=""
     this.teamsAuto = undefined 
     this.teamControl.disable()
+    this.teamRivalControl.disable()
+    this.teamsAuto = undefined
+    this.teamsAutoRival = undefined
     this.teams = []
+    this.resetWeeks()
     this.resetTop()
     this.resetBottom()
+  }
+  private resetWeeks(){
+    this.weekMatchLast=[]
+    this.weekMatchInit=[]
+    this.selectedWMI = 0
+    this.selectedWML = 0  
+    
   }
 
   private resetTop(){
@@ -469,9 +498,11 @@ export class StatsComponent implements OnInit {
 
   getSource() {
     let url = environment.streamlit +"?team_searched=" + this.streamlitTeam.toUpperCase()+"&rival_searched="+this.streamlitRival.toUpperCase()+"&league_searched="+this.streamlitLeague.toUpperCase()
-    //console.log(url)
+    console.log(url)
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
-  }
+   }
+
+  
 
 
   openSnackBar(msg: string, horizontal=this.horizontalPosition, vertical=this.verticalPosition) {

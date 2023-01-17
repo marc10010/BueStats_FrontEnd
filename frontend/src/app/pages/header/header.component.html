@@ -1,6 +1,9 @@
 <mat-toolbar color = "primary" fxLayoutAlign="space-between center">
     <div class="d-inline-block" >
-        <button [routerLink]="['/home']" mat-button>Home </button>
+        <button [routerLink]="['/home']" mat-button>{{"header.home" | translate}} </button>
+    </div>
+    <div>
+        <button (click)="changeLanguage()"  mat-button>Esp </button>
     </div>
     <div> 
         <span>BueStats 2.0</span>

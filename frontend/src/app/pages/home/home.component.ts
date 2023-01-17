@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import {  MatSnackBar,  MatSnackBarHorizontalPosition,  MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
@@ -12,10 +13,13 @@ export class HomeComponent implements OnInit {
 
   
   constructor(
+    private translate: TranslateService,
     private _snackBar: MatSnackBar,
     private apiService: ApiService,
     private router: Router,
-  ) { }
+  ) { 
+    this.setAppLanguage()
+  }
 
   infoLeague = []
 
@@ -39,6 +43,11 @@ export class HomeComponent implements OnInit {
       horizontalPosition: this.horizontalPosition,
       verticalPosition: this.verticalPosition,
     });
+  }
+
+  setAppLanguage(){
+    this.translate.setDefaultLang('en');
+    this.translate.use(this.translate.currentLang)
   }
 
 }
