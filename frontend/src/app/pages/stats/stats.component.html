@@ -1,181 +1,201 @@
 
 <!--Div con los desplegables -->
 <div>
-  <div class="parent">
-    
-    <div class="league"> 
-      <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>{{"stats.League" | translate}}</mat-label>
-        <mat-select [(ngModel)]="selectedLeague" (selectionChange)="changeLeague(selectedLeague)">
-          <mat-option *ngFor="let league of leagues" [value]="league.index">
-            {{league.value}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-    
-    <div class="season"> 
-      <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>{{"stats.Season" | translate}}</mat-label>
-        <mat-select [(ngModel)]="selectedSeason" (selectionChange)="changeSeason(selectedSeason)" [disabled]="!selectedLeague">
-          <mat-option *ngFor="let season of seasons" [value]="season.index">
-            {{season.value}}
-          </mat-option>
-        </mat-select>
-    </mat-form-field>
-    </div>
-
-    <div class="group">
-      <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>{{"stats.Group" | translate}}</mat-label>
-        <mat-select [disabled]="teamsAuto==undefined" [(ngModel)]="selectedGroup" (selectionChange)="groupSelected($event)" >
-          <mat-option *ngFor="let group of groups" [value]="group.value">
-            {{group.value}}
-          </mat-option>
-        </mat-select>
-    </mat-form-field>
-<!--
-      <mat-form-field appearance="fill">
-        <mat-label>Group</mat-label>
-        <input type="text" matInput [formControl]="groupControl" [matAutocomplete]="autoGroup" >
-        <mat-autocomplete #autoGroup="matAutocomplete" [displayWith]="displayFn" 
-          (optionSelected)="groupSelected($event.option.value.team)" 
-          [(ngModel)]="selectedGroup">
-          <mat-option *ngFor="let group of groupsAuto | async" [value]="group">
-            {{group.team}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
--->
-     </div>
-    <div class="team"> 
-      <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>{{"stats.Team" | translate}}</mat-label>
-        <input matInput type="text"  [formControl]="teamControl" [matAutocomplete]="autoTeam">
-        <mat-autocomplete  #autoTeam="matAutocomplete" [displayWith]="displayFn"(optionSelected)="teamSelected($event.option.value)">
-          <mat-option *ngFor="let team of teamsAuto | async" [value]="team"   >
-            {{team.team}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-    </div>
-
-    <div class="weekI">
-      <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>{{"stats.WMI" | translate}}</mat-label>
-        <mat-select [(ngModel)]="selectedWMI" [disabled]="!selectedTeam">
-          <mat-option *ngFor="let weekMatch of weekMatchInit" [value]="weekMatch">
-            {{"stats.WM" | translate}} {{weekMatch}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-    <div class="weekF">
-      <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>{{"stats.WML" | translate}}</mat-label>
-        <mat-select [(ngModel)]="selectedWML" [disabled]="!selectedWMI">
-          <mat-option *ngFor="let weekMatch of weekMatchInit" [value]="weekMatch">
-            {{"stats.WM" | translate}} {{weekMatch}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-     </div>
-
-    <div class="topTeam">
-      <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>{{"stats.TeamScout" | translate}}</mat-label>
-        <input matInput type="text"  [formControl]="teamRivalControl" [matAutocomplete]="autoTeamRival">
-        <mat-autocomplete  #autoTeamRival="matAutocomplete" [displayWith]="displayFn"(optionSelected)="teamRivalSelected($event.option.value)">
-          <mat-option *ngFor="let team of teamsAutoRival | async" [value]="team"   >
-            {{team.team}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-      <!--
-      <mat-form-field  appearance="fill" fxFlex="fxFill">
-        <mat-label>TOP Teams</mat-label>
-        <mat-chip-list #TopList aria-label="Top selection" [disabled]="!selectedLeague">
-          <mat-chip
-            *ngFor="let team of selectedTopTeams"
-            (removed)="removeTop(team)">
-            {{team}}
-            <button matChipRemove>
-              <mat-icon>close</mat-icon>
-            </button>
-          </mat-chip>
-          <input
-            placeholder="New top team..."
-            #topTeamInput
-            [formControl]="topTeamCtrl"
-            [matAutocomplete]="autoTop"
-            [matChipInputFor]="TopList"
-            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-            (matChipInputTokenEnd)="addTop($event)"
-            >
-
-        </mat-chip-list>
-        <mat-autocomplete #autoTop="matAutocomplete" (optionSelected)="selectedTop($event)">
-          <mat-option *ngFor="let team of teamsTopAuto | async" [value]="team">
-            {{team}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-      -->
-
-    </div>
-    
-    <div class="botTeam">
-      <!--
-      <mat-form-field appearance="fill" fxFlex="fxFill">
-        <mat-label>Bottom Teams</mat-label>
-        <mat-chip-list #BotList aria-label="Bottom selection" [disabled]="!selectedLeague">
-          <mat-chip
-            *ngFor="let team of selectedBotTeams"
-            (removed)="removeBot(team)">
-            {{team}}
-            <button matChipRemove>
-              <mat-icon>close</mat-icon>
-            </button>
-          </mat-chip>
-          <input
-            placeholder="New bottom team..."
-            #topTeamInput
-            [formControl]="botTeamCtrl"
-            [matAutocomplete]="autoBot"
-            [matChipInputFor]="BotList"
-            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-            (matChipInputTokenEnd)="addBot($event)">
-
-        </mat-chip-list>
-        <mat-autocomplete #autoBot="matAutocomplete" (optionSelected)="selectedBot($event)">
-          <mat-option *ngFor="let team of teamsBotAuto | async" [value]="team">
-            {{team}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-      -->
-    </div>
-    
-    <div class="checks">
-      <!--
-      <section class="example-section">
-        <mat-checkbox class="example-margin" [(ngModel)]="extractAllWeeks" [disabled]="!selectedLeague">Extraer Todas las Jornadas</mat-checkbox>
-        <br>
-        <mat-checkbox class="example-margin" [(ngModel)]="extractStatsTeam" [disabled]="!selectedLeague">Extaer estadisitcas de equipo</mat-checkbox>
-        <br>
-        <mat-checkbox class="example-margin" [(ngModel)]="extractRanking" [disabled]="!selectedLeague">Extraer Rankings</mat-checkbox>
-      </section>
-      -->       
-    </div>
-
-    <div class="search" >
-      <div class="buttonSearch">
-        <button [disabled]="!selectedWML" mat-raised-button (click)="extractStats()" >{{"stats.Search" | translate}}</button>
-      </div>
+  <mat-accordion >
+    <mat-expansion-panel [expanded]="panelOpenState" showToggle >
+      <mat-expansion-panel-header >
+        <mat-panel-title class="title">
+          <h3>{{"stats.Filters" | translate}}</h3>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="parent">
+        <div class="league"> 
+          <mat-form-field appearance="fill" fxFlex="fxFill">
+            <mat-label>{{"stats.League" | translate}}</mat-label>
+            <mat-select [(ngModel)]="selectedLeague" (selectionChange)="changeLeague(selectedLeague)">
+              <mat-option *ngFor="let league of leagues" [value]="league.index">
+                {{league.value}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        
+        <div class="season"> 
+          <mat-form-field appearance="fill" fxFlex="fxFill">
+            <mat-label>{{"stats.Season" | translate}}</mat-label>
+            <mat-select [(ngModel)]="selectedSeason" (selectionChange)="changeSeason(selectedSeason)" [disabled]="!selectedLeague">
+              <mat-option *ngFor="let season of seasons" [value]="season.index">
+                {{season.value}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+        </div>
       
-    </div>
-  </div>
+        <div class="group">
+          <mat-form-field appearance="fill" fxFlex="fxFill">
+            <mat-label>{{"stats.Group" | translate}}</mat-label>
+            <mat-select [disabled]="teamsAuto==undefined" [(ngModel)]="selectedGroup" (selectionChange)="groupSelected($event)" >
+              <mat-option *ngFor="let group of groups" [value]="group.value">
+                {{group.value}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!--  
+          <mat-form-field appearance="fill">
+            <mat-label>Group</mat-label>
+            <input type="text" matInput [formControl]="groupControl" [matAutocomplete]="autoGroup" >
+            <mat-autocomplete #autoGroup="matAutocomplete" [displayWith]="displayFn" 
+              (optionSelected)="groupSelected($event.option.value.team)" 
+              [(ngModel)]="selectedGroup">
+              <mat-option *ngFor="let group of groupsAuto | async" [value]="group">
+                {{group.team}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          --> 
+         </div>
+        <div class="team"> 
+          <mat-form-field appearance="fill" fxFlex="fxFill">
+            <mat-label>{{"stats.Team" | translate}}</mat-label>
+            <input matInput type="text"  [formControl]="teamControl" [matAutocomplete]="autoTeam">
+            <mat-autocomplete  #autoTeam="matAutocomplete" [displayWith]="displayFn"(optionSelected)="teamSelected($event.option.value)">
+              <mat-option *ngFor="let team of teamsAuto | async" [value]="team"   >
+                {{team.team}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+      
+        <div class="weekI">
+          <mat-form-field appearance="fill" fxFlex="fxFill">
+            <mat-label>{{"stats.WMI" | translate}}</mat-label>
+            <mat-select [(ngModel)]="selectedWMI" [disabled]="!selectedTeam">
+              <mat-option *ngFor="let weekMatch of weekMatchInit" [value]="weekMatch">
+                {{"stats.WM" | translate}} {{weekMatch}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!--  
+        <div class="weekI">
+          <mat-form-field appearance="fill" fxFlex="fxFill" >
+            <mat-label>{{"stats.WMI" | translate}}</mat-label>
+            <input matInput disabled value="{{'stats.WM' | translate}} 1">
+              
+          </mat-form-field>
+        </div>
+        -->
+        <div class="weekF">
+          <mat-form-field appearance="fill" fxFlex="fxFill">     
+            <mat-label>{{"stats.WML" | translate}}</mat-label>
+            <mat-select [(ngModel)]="selectedWML" [disabled]="!selectedWMI">
+              <mat-option *ngFor="let weekMatch of weekMatchInit" [value]="weekMatch">
+                {{"stats.WM" | translate}} {{weekMatch}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      
+        <div class="topTeam">
+          <mat-form-field appearance="fill" fxFlex="fxFill">
+            <mat-label>{{"stats.TeamScout" | translate}}</mat-label>
+            <input matInput type="text"  [formControl]="teamRivalControl" [matAutocomplete]="autoTeamRival">
+            <mat-autocomplete  #autoTeamRival="matAutocomplete" [displayWith]="displayFn"(optionSelected)="teamRivalSelected($event.option.value)">
+              <mat-option *ngFor="let team of teamsAutoRival | async" [value]="team"   >
+                {{team.team}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <!--
+          <mat-form-field  appearance="fill" fxFlex="fxFill">
+            <mat-label>TOP Teams</mat-label>
+            <mat-chip-list #TopList aria-label="Top selection" [disabled]="!selectedLeague">
+              <mat-chip
+                *ngFor="let team of selectedTopTeams"
+                (removed)="removeTop(team)">
+                {{team}}
+                <button matChipRemove>
+                  <mat-icon>close</mat-icon>
+                </button>
+              </mat-chip>
+              <input
+                placeholder="New top team..."
+                #topTeamInput
+                [formControl]="topTeamCtrl"
+                [matAutocomplete]="autoTop"
+                [matChipInputFor]="TopList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="addTop($event)"
+                >
+            
+            </mat-chip-list>
+            <mat-autocomplete #autoTop="matAutocomplete" (optionSelected)="selectedTop($event)">
+              <mat-option *ngFor="let team of teamsTopAuto | async" [value]="team">
+                {{team}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          -->
+        
+        </div>
+
+        <div class="botTeam">
+          <!--
+          <mat-form-field appearance="fill" fxFlex="fxFill">
+            <mat-label>Bottom Teams</mat-label>
+            <mat-chip-list #BotList aria-label="Bottom selection" [disabled]="!selectedLeague">
+              <mat-chip
+                *ngFor="let team of selectedBotTeams"
+                (removed)="removeBot(team)">
+                {{team}}
+                <button matChipRemove>
+                  <mat-icon>close</mat-icon>
+                </button>
+              </mat-chip>
+              <input
+                placeholder="New bottom team..."
+                #topTeamInput
+                [formControl]="botTeamCtrl"
+                [matAutocomplete]="autoBot"
+                [matChipInputFor]="BotList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="addBot($event)">
+            
+            </mat-chip-list>
+            <mat-autocomplete #autoBot="matAutocomplete" (optionSelected)="selectedBot($event)">
+              <mat-option *ngFor="let team of teamsBotAuto | async" [value]="team">
+                {{team}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          -->
+        </div>
+
+        <div class="checks">
+          <!--
+          <section class="example-section">
+            <mat-checkbox class="example-margin" [(ngModel)]="extractAllWeeks" [disabled]="!selectedLeague">Extraer Todas las Jornadas</mat-checkbox>
+            <br>
+            <mat-checkbox class="example-margin" [(ngModel)]="extractStatsTeam" [disabled]="!selectedLeague">Extaer estadisitcas de equipo</mat-checkbox>
+            <br>
+            <mat-checkbox class="example-margin" [(ngModel)]="extractRanking" [disabled]="!selectedLeague">Extraer Rankings</mat-checkbox>
+          </section>
+          -->       
+        </div>
+      
+        <div class="search" >
+          <div class="buttonSearch">
+            <button [disabled]="!selectedWML" mat-raised-button (click)="extractStats()" >{{"stats.Search" | translate}}</button>
+          </div>
+
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+    <!--<mat-expansion-panel (opened)="panelOpenState = true"
+                         (closed)="panelOpenState = false">
+    -->
+    
   
   <div class="loader_div" *ngIf="loading">
     <div class="loader_spinner">
@@ -188,9 +208,11 @@
 
 
   <div  *ngIf="cargaCompleta==2">
-    <iframe #myiFrame class="iframe" [src]="getSource()">
+    <!--<iframe #myiFrame class="iframe" [src]="getSource()">
 
     </iframe>
+  -->
+  <iframe class="iframe" [src]="url">></iframe>
   </div>
 
 

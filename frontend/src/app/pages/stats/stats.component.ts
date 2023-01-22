@@ -1,18 +1,20 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, Sanitizer, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Sanitizer, ViewChild, ViewChildren } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { environment } from 'src/environments/environment';
-import { map, Observable, startWith, of } from 'rxjs';
+import { map, Observable, startWith, of, Subscription, delay } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { optionsMap, Team } from 'src/app/types/api';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { DomSanitizer } from "@angular/platform-browser";
 import {  MatSnackBar,  MatSnackBarHorizontalPosition,  MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog } from '@angular/material/dialog';
 import { DialogContentErrors } from 'src/app/dialogs/dialog-content-error';
 import { AppComponent } from 'src/app/app.component';
 import { TranslateService } from '@ngx-translate/core';
+import { CachedService } from 'src/app/services/cachedService';
+
 
 @Component({
   selector: 'app-stats',
@@ -26,18 +28,27 @@ export class StatsComponent implements OnInit {
   @ViewChild('myiFrame') myframe:ElementRef<HTMLIFrameElement> |undefined ;
   
   constructor(
-    public dialog: MatDialog,
-    private _snackBar: MatSnackBar,
-    private cdref: ChangeDetectorRef,
-    private apiService: ApiService,
-    private sanitizer: DomSanitizer,
-    private translate: TranslateService
-  ) {
+      public dialog: MatDialog,
+      private _snackBar: MatSnackBar,
+      private cdref: ChangeDetectorRef,
+      private apiService: ApiService,
+      private sanitizer: DomSanitizer,
+      private translate: TranslateService,
+      private cachedService: CachedService ) {
+    
+    this.changeLangEventsubscription = this.cachedService.getChangeLangEvent().subscribe(data=>{
+      console.log(data)
+      this.getSource(data);
+    })
+          
+
     this.teamControl.disable()
     this.teamRivalControl.disable()
     this.groupControl.disable()
     }
 
+  changeLangEventsubscription:Subscription
+  panelOpenState = true;
   teamControl = new FormControl<string | Team >("")
   teamRivalControl = new FormControl<string | Team >("")
   groupControl = new FormControl<string | Team >("")
@@ -71,6 +82,8 @@ export class StatsComponent implements OnInit {
   loading:Boolean = false
   msg_loading = this.translate.instant('stats.msg_loading1')
 
+  url:any =  environment.streamlit
+
 
   
   teamsAuto: Observable<Team[]> | undefined;
@@ -80,12 +93,13 @@ export class StatsComponent implements OnInit {
   selectedTopTeams : string[]=[]
   teamsBotAuto: Observable<string[]> |undefined
   selectedBotTeams : string[]=[]
-
+  
+  contador = 0
 
   
   horizontalPosition: MatSnackBarHorizontalPosition = 'center';
   verticalPosition: MatSnackBarVerticalPosition = 'top';
-  getSource_sanitize = this.getSource()
+  //getSource_sanitize = this.getSource()
 
   ngOnInit(): void {
     if('https:' == window.location.protocol) this.openSnackBar("Estas accediendo a esta web con 'HTTPS', Para ver la información deberas acceder a traves de 'http://buestats.redirectme.net'")
@@ -277,9 +291,11 @@ export class StatsComponent implements OnInit {
       });
     }
     else{
+      this.getSource(this.translate.currentLang)
       this.hide_iframe()
       this.cargaCompleta =1
       this.hasTeam= false 
+      this.contador=0
       if(this.selectedTeamRival==""){
         this.selectedTeamRival = this.teams.filter(team => team.index == this.selectedGroup)[0].value
         
@@ -297,7 +313,7 @@ export class StatsComponent implements OnInit {
           this.streamlitLeague= data
           this.cargaCompleta =2
           this.loading=false
-          this.getSource()
+          this.getSource(this.translate.currentLang)
 
           
         
@@ -310,7 +326,12 @@ export class StatsComponent implements OnInit {
             data: {title: this.translate.instant('stats.error_title1'), msg: this.translate.instant('stats.error_msg1')},
             });
           }
-          if(error.status ==500) {
+          else if(error.status ==405){
+            this.dialog.open(DialogContentErrors, {
+            data: {title: this.translate.instant('stats.error_title1'), msg: this.translate.instant('stats.error_msg4')},
+            });
+          }
+          else {
             this.dialog.open(DialogContentErrors, {
               data: {title: this.translate.instant('stats.error_title2'), msg: this.translate.instant('stats.error_msg2')},
               });
@@ -322,15 +343,21 @@ export class StatsComponent implements OnInit {
         this.loading =false
         if(error.status ==404){
           this.dialog.open(DialogContentErrors, {
-          data: {title: this.translate.instant('stats.error_title3'), msg: this.translate.instant('stats.error_msg2')},
+          data: {title: this.translate.instant('stats.error_title3'), msg: this.translate.instant('stats.error_msg1')},
           });
         }
-        if(error.status ==500) {
+        else if(error.status ==405){
+          this.dialog.open(DialogContentErrors, {
+          data: {title: this.translate.instant('stats.error_title1'), msg: this.translate.instant('stats.error_msg4')},
+          });
+        }
+        else {
           this.dialog.open(DialogContentErrors, {
             data: {title: this.translate.instant('stats.error_title2'), msg: this.translate.instant('stats.error_msg2')},
             });
         }
       })
+     
     }
   }
 
@@ -495,11 +522,14 @@ export class StatsComponent implements OnInit {
     this.botTeamCtrl.reset()
     this.selectedBotTeams = []
   }
+  
 
-  getSource() {
-    let url = environment.streamlit +"?team_searched=" + this.streamlitTeam.toUpperCase()+"&rival_searched="+this.streamlitRival.toUpperCase()+"&league_searched="+this.streamlitLeague.toUpperCase()
-    console.log(url)
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+
+  public getSource(lang :any) {
+    console.log("lang  ", lang)
+    this.url = environment.streamlit +"?team_searched=" + this.streamlitTeam.toUpperCase()+"&rival_searched="+this.streamlitRival.toUpperCase()+"&league_searched="+this.streamlitLeague.toUpperCase()+'&lang='+lang
+    this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.url)
+    console.log(this.url)
    }
 
   

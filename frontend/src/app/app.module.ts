@@ -13,6 +13,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { DialogContentErrors } from './dialogs/dialog-content-error';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { CachedService } from './services/cachedService';
 
 
 export function HttpLoaderFactory(http:HttpClient){

@@ -16,6 +16,7 @@
         "More" : "And more..."
     },
     "stats":{
+        "Filters": "Search Filters",
         "League": "League",
         "Season": "Season",
         "Group": "Group",
@@ -35,7 +36,8 @@
         "error_msg2": "Please try it again later",
         "error_title3": "Error generating team data",
         "error_msg3": "We are sorry, this group is not available",
+        "error_msg4" : "Match not found, try with more matches",
         "alert": "Alert!",
-        "alert_msg": "First weekmatch can not be greater than last weekmatch"
+        "alert_msg": "First weekmatch can not be greater or equal than last weekmatch"
     }
 }

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { CachedService } from 'src/app/services/cachedService';
 import { Language } from 'src/app/types/api';
+import { StatsComponent } from '../stats/stats.component';
 
 @Component({
   selector: 'app-header',
@@ -12,7 +14,7 @@ export class HeaderComponent implements OnInit {
   langs: Language[]
   selectedLang: Language | undefined;
 
-  constructor(public translate: TranslateService) { 
+  constructor(public translate: TranslateService, public cached: CachedService) { 
     this.setAppLanguage()
     this.langs=[
       {name:"Esp", code:'es',flag:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Flag_of_Spanish_language_%28ES-MX%29.svg/45px-Flag_of_Spanish_language_%28ES-MX%29.svg.png"},
@@ -29,6 +31,7 @@ export class HeaderComponent implements OnInit {
     console.log(value)
     this.selectedLang = value
     this.translate.use(value.code)
+    this.cached.sendChangeLangEvent(value.code)
   }
   setAppLanguage(){
     this.translate.currentLang = 'en'

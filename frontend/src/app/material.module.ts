@@ -15,7 +15,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
-import {DialogModule} from '@angular/cdk/dialog';
+import { DialogModule } from '@angular/cdk/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 
 
@@ -39,7 +41,9 @@ const modulosMaterial = [
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatDialogModule,
-    DialogModule
+    DialogModule,
+    MatProgressBarModule,
+    MatExpansionModule
 ]
 
 @NgModule({

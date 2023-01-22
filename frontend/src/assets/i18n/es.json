@@ -16,6 +16,7 @@
         "More" : "Y mas..."
     },
     "stats":{
+        "Filters": "Filtros de Busqueda",
         "League": "Liga",
         "Season": "Temporada",
         "Group": "Grupo",
@@ -35,8 +36,9 @@
         "error_msg2": "Por favor intentelo de nuevo mas tarde",
         "error_title3": "Error generando datos de la liga",
         "error_msg3": "Lo sentimos, este grupo no esta disponible",
+        "error_msg4" : "Partido no encontrado, prueba con mas jornadas",
         "alert": "Alerta!",
-        "alert_msg": "La primera jornada no puede ser posterior a la última jornada"
+        "alert_msg": "La primera jornada no puede ser posterior o igual a la última jornada"
     }
     
 }
