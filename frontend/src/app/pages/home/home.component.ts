@@ -28,7 +28,6 @@ export class HomeComponent implements OnInit {
 
 
   ngOnInit(): void {
-    if('https:' == window.location.protocol) this.openSnackBar()
     this.apiService.getBasicInfoLeagues().subscribe(data => {
       this.infoLeague=data
     })
@@ -38,12 +37,7 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/stats'], {state: {data:{league}}})
   }
 
-  openSnackBar() {
-    this._snackBar.open("Estas accediendo a esta web con 'HTTPS', Para ver la información deberas acceder a traves de 'HTTP' "+ 'http://buestats.redirectme.net', 'Cerrar', {
-      horizontalPosition: this.horizontalPosition,
-      verticalPosition: this.verticalPosition,
-    });
-  }
+  
 
   setAppLanguage(){
     this.translate.setDefaultLang('en');

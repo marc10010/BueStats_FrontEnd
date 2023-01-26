@@ -81,7 +81,8 @@ export class StatsComponent implements OnInit {
   cargaCompleta = 0
   loading:Boolean = false
   msg_loading = this.translate.instant('stats.msg_loading1')
-
+  msg_timer =this.translate.instant('stats.msg_time1')
+  
   url:any =  environment.streamlit
 
 
@@ -102,8 +103,6 @@ export class StatsComponent implements OnInit {
   //getSource_sanitize = this.getSource()
 
   ngOnInit(): void {
-    if('https:' == window.location.protocol) this.openSnackBar("Estas accediendo a esta web con 'HTTPS', Para ver la información deberas acceder a traves de 'http://buestats.redirectme.net'")
-
     this.getLeagues()
     if (history.state.data) {
       this.selectedLeague =history.state.data.league
@@ -130,7 +129,7 @@ export class StatsComponent implements OnInit {
     this.groups=[]
     this.loading = true
     this.msg_loading=this.translate.instant('stats.msg_loading2')
-    
+    this.msg_timer= this.translate.instant('stats.msg_time1') + this.fmtMSS(10)
     this.apiService.getAllTeamsByLeagueYear(year, league).subscribe(data => {
       for (let i= 0; i< data.length; ++i){
         for(let j = 0; j<data[i].length; ++j){
@@ -304,6 +303,7 @@ export class StatsComponent implements OnInit {
       }
       this.loading=true
       this.msg_loading=this.translate.instant('stats.msg_loading3')
+      this.msg_timer = this.translate.instant('stats.msg_time1') + this.fmtMSS((this.selectedWML - this.selectedWMI +1)*15) + this.translate.instant('stats.msg_time2')
       this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, this.selectedTeam, this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking, this.selectedTeamRival).subscribe(data =>{            
         this.streamlitTeam = data[0]
         this.streamlitRival = data[1]
@@ -524,22 +524,21 @@ export class StatsComponent implements OnInit {
   }
   
 
+ 
+  public fmtMSS(e: number){
+    const h = Math.floor(e / 3600).toString().padStart(2,'0'),
+    m = Math.floor(e % 3600 / 60).toString().padStart(2,'0'),
+    s = Math.floor(e % 60).toString().padStart(2,'0');
+
+    return  m + this.translate.instant('stats.msg_time3') + s +this.translate.instant('stats.msg_time4');
+
+  }
 
   public getSource(lang :any) {
     console.log("lang  ", lang)
     this.url = environment.streamlit +"?team_searched=" + this.streamlitTeam.toUpperCase()+"&rival_searched="+this.streamlitRival.toUpperCase()+"&league_searched="+this.streamlitLeague.toUpperCase()+'&lang='+lang
     this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.url)
     console.log(this.url)
-   }
-
-  
-
-
-  openSnackBar(msg: string, horizontal=this.horizontalPosition, vertical=this.verticalPosition) {
-    this._snackBar.open(msg, 'Cerrar', {
-      horizontalPosition: horizontal,
-      verticalPosition: vertical,
-    });
   }
 
 }
