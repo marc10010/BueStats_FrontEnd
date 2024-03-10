@@ -14,7 +14,7 @@ export const environment = {
   getBasicInfo: 'basicInfoLeagues',
   getAllTeams:'getAllTeamsByLeagueYear',
   getWeeksMatch:'getMatchWeeksFromSeasonLeague',
-  createCsv:'createCsv',
+  createCsv:'createCsv_new',
 };
 
 /*

@@ -292,31 +292,10 @@ export class StatsComponent implements OnInit {
       this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, this.selectedTeam, this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking, this.selectedTeamRival).subscribe(data =>{            
         this.streamlitTeam = data[0]
         this.streamlitRival = data[1]
-        //console.log(this.streamlitTeam, this.streamlitRival)
-        this.msg_loading=this.translate.instant('stats.msg_loading4')
-        this.apiService.createCsv(this.selectedLeague, this.selectedSeason, this.selectedGroup, 'LIGA', this.selectedWMI, this.selectedWML, this.extractAllWeeks, this.extractStatsTeam, this.extractRanking, '').subscribe(data =>{            
-          this.streamlitLeague= data
-          this.cargaCompleta =2
-          this.loading=false
-          this.getSource()
-
-          
-        
-        },
-        error=>{
-          this.cargaCompleta=0
-          this.loading =false
-          if(error.status ==404){
-            this.dialog.open(DialogContentErrors, {
-            data: {title: this.translate.instant('stats.error_title1'), msg: this.translate.instant('stats.error_msg1')},
-            });
-          }
-          if(error.status ==500) {
-            this.dialog.open(DialogContentErrors, {
-              data: {title: this.translate.instant('stats.error_title2'), msg: this.translate.instant('stats.error_msg2')},
-              });
-          }
-        })
+        this.streamlitLeague= data[2]
+        this.cargaCompleta = 2
+        this.loading = false
+        this.getSource()
       },
       error=>{
         this.cargaCompleta=0
